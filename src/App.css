@@ -1,0 +1,19 @@
+.navbar-item {
+    @apply btn bg-inherit rounded-none border-none hover:bg-slate-700 text-lg text-white
+}
+
+.filter-input {
+    @apply input input-bordered input-sm
+}
+
+.card-spacing {
+    transition: padding 0.2s;
+}
+
+.card-spacing:hover {
+    @apply p-1
+}
+
+.form-input {
+    @apply input input-bordered flex items-center gap-2 justify-between
+}
