@@ -1,7 +1,7 @@
-import Item from "../models/item.model";
-import User from "../models/user.model";
-import Listing from "../models/listing.model";
-import { errorHandler } from "../utils/error";
+import Item from "../models/item.model.js";
+import User from "../models/user.model.js";
+import Listing from "../models/listing.model.js";
+import { errorHandler } from "../utils/error.js";
 
 export const deleteAccount = async (req, res, next) => {
     const { username } = req.body;
@@ -42,49 +42,15 @@ export const updateAccount = async (req, res, next) => {
     }
 }
 
-export const addItem = async (req, res, next) => {
-    const { name, description, category, initPrice, image } = req.body;
-    if (!name || !description || !category || !initPrice) {
-        return next(errorHandler(400, "All fields are required"));
-    }
+export const getUserById = async (req, res, next) => {
     try {
-        const item = new Item({
-            name,
-            description,
-            category,
-            initPrice,
-            image,
-            user: req.user._id
-        });
-        await item.save();
-        res.status(201).json(item);
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const getItems = async (req, res, next) => {
-    try {
-        const items = await Item.find({ user: req.user._id });
-        res.status(200).json(items);
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const deleteItem = async (req, res, next) => {
-    const { id } = req.params;
-    try {
-        const item = await Item.findById(id);
-        if (!item) {
-            return next(errorHandler(400, "Item not found"));
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return next(errorHandler(404, "User not found"));
         }
-        await item.deleteOne({ _id: id });
-        res.status(200).json("Item deleted successfully");
+        res.status(200).json(user);
     }
     catch (error) {
         next(error);
     }
 }
-
-// export const updateItem = async (req, res, next) => {

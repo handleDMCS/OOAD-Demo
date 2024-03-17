@@ -5,7 +5,7 @@ const itemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    user: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
@@ -17,16 +17,12 @@ const itemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    initPrice: {
-        type: Number,
-        required: true
-    },
     image: {
         // using https://placehold.co/
         type: String,
         default: ''
-    },
-});
+    }
+}, { timestamps: true });
 
 const Item = mongoose.model('Item', itemSchema);
 

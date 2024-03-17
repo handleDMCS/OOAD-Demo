@@ -53,7 +53,7 @@ export const login = async (req, res, next) => {
             return next(errorHandler(400, "Invalid credentials"));
         }
 
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {expiresIn: "1d"});
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
         res.cookie("access_token", token, {httpOnly: true})
             .status(200)
             .json("User logged in successfully");
