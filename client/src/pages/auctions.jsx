@@ -4,7 +4,7 @@ import Dashboard from './components/dash_board'
 
 function auctions() {
   return (
-    <div class='flex flex-row'>
+    <div className='flex flex-row'>
       <Navbar></Navbar>
       <Dashboard></Dashboard>
     </div>

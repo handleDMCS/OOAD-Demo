@@ -4,17 +4,20 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-    const { firstname, lastname, username, password } = req.body;
-    // console.log(req.body);
+    const { firstname, lastname, username, email, password, confpassword } = req.body;
+    console.log(req.body);
 
     try {
-        if (!firstname || !lastname || !username || !password) {
+        if (!firstname || !lastname || !username || !email || !password || !confpassword) {
             return next(errorHandler(400, "Please fill in all fields"));
         }
 
         const existingUser = await User.findOne({username});
         if (existingUser) {
             return next(errorHandler(400, "Username already exists"));
+        }
+        if (password !== confpassword) {
+            return next(errorHandler(400, "Passwords do not match"));
         }
 
         const avatar = `https://avatar.iran.liara.run/username?username=${firstname}+${lastname}`;
@@ -24,6 +27,7 @@ export const signup = async (req, res, next) => {
             firstname,
             lastname,
             username,
+            email,
             password: hashedPassword,
             avatar,
         });
