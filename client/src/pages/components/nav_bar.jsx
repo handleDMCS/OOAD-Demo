@@ -1,19 +1,30 @@
-import React from 'react'
+// import React from 'react'
+import { Link } from 'react-router-dom'
 import Filter from './filter'
 
 export default function nav_bar() {
   return (
-    <div class="flex flex-col justify-between w-72 h-screen p-2">
+    <div className="flex flex-col justify-between w-72 h-screen p-2">
       <ul className="menu bg-base-200 rounded-box">
-        <li><a>Home</a></li>
+        <Link to="/profile">
+          <li><a>Profile</a></li>
+        </Link>
         <li>
-          <h2 class="menu-title">Auctions</h2>
+          <Link>
+            <h2 className="menu-title">Auctions</h2>
+          </Link>
           <ul>
-            <li><a>All Auctions</a></li>
-            <li><a>My Auctions</a></li>
+            <Link to="/my">
+              <li><a>My Auctions</a></li>
+            </Link>
+            <Link to="/">
+              <li><a>All Auctions</a></li>
+            </Link>
           </ul>
         </li>
-        <li><a>My Items</a></li>
+        <Link to="/items/my">
+          <li><a>My Items</a></li>
+        </Link>
       </ul>      
 
       <Filter></Filter>

@@ -3,6 +3,27 @@ import Pagination_bar from './pagination_bar'
 import Product_card from './product_card'
 
 export default function dash_board() {
+  const [auctions, setAuctions] = React.useState([])
+  // get auctions list
+  const fetchAuctions = async () => {
+    try {
+      const res = await fetch('/api/listing/listings', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const data = await res.json()
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
+  useEffect(() => {
+    fetchAuctions()
+  }, [])
+
   return (
     <div className='flex flex-grow pt-2 pr-2 pb-2'>
       <div className="flex flex-grow flex-col bg-base-200">

@@ -21,6 +21,10 @@ const itemSchema = new mongoose.Schema({
         // using https://placehold.co/
         type: String,
         default: ''
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

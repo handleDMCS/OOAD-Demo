@@ -1,12 +1,20 @@
+import { set } from 'mongoose';
 import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-// import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure
+} from '../redux/slice/userSlice'
 
 export default function login() {
   const [form, setForm] = useState({});
+  const {loading, error} = useSelector((state) => state.user)
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setForm({ 
@@ -16,6 +24,7 @@ export default function login() {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
+    dispatch(loginStart());
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -27,13 +36,13 @@ export default function login() {
       const data = await res.json();
       console.log(data);
       if (data.success === false) {
-        console.log(data.message);
+        dispatch(loginFailure(data.message));
         return;
       }
-      // dispatch(login(data));
+      dispatch(loginSuccess(data));
       navigate('/');
     } catch (error) {
-      console.log(error);
+      dispatch(loginFailure(error.message));
     }
   }
 
@@ -55,6 +64,8 @@ export default function login() {
             <hr className="w-full border-t-2 border-gray-300" />
             <a href="#" className="text-blue-500 flex flex-row-reverse">Forgot password</a>
           </form>
+
+          {error && <p className="text-red-500 mt-5">{error}</p>}
         </div>
       </div>
   )

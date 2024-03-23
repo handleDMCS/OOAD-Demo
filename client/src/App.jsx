@@ -10,6 +10,8 @@ import Register from './pages/register'
 import Login from './pages/login'
 import Profile from './pages/profile'
 import PublicRoute from './routes/PublicRoute'
+import NotFound from './pages/notfound'
+import My_items from './pages/my_items'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -19,17 +21,17 @@ function App() {
       <Routes>
         <Route element={<PrivateRoute/>}>
           <Route path='/profile' element={<Profile />}></Route>
-          {/* items */}
+          <Route path='/items/my' element={<My_items />}></Route>
         </Route>
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Auctions />} />
         </Route>
+
+        <Route path='*' element={<NotFound />} />
+        
       </Routes>
-      {/* <Auctions></Auctions>
-      <Login></Login>
-      <Register></Register> */}
     </BrowserRouter>
     
 

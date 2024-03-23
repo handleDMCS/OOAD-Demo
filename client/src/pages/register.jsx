@@ -1,12 +1,19 @@
 import React from 'react'
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
+import {
+	signupStart,
+	signupSuccess,
+	signupFailure,
+} from '../redux/slice/userSlice';
 
 export default function register() {
   const [formData, setFormData] = useState({});
-	const [error, setError] = useState(null);
-	const [loading, setLoading] = useState(false);
+	const {loading, error} = useSelector((state) => state.user);
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 
 	const handleChange = (e) => {
 		setFormData(
@@ -19,8 +26,8 @@ export default function register() {
 	
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		dispatch(signupStart());
 		try {
-			setLoading(true);
 			const res = await fetch('/api/auth/signup', {
 				method: 'POST',
 				headers: {
@@ -32,17 +39,14 @@ export default function register() {
 			const data = await res.json();
 			console.log(data)
 			if(data.success === false) {
-				setError(data.message);
-				setLoading(false);
+				dispatch(signupFailure(data.message));
 				return;
 			}
-			setLoading(false);
-			setError(null);
+			dispatch(signupSuccess(data));
 			navigate('/login')
 			// console.log(data)
 		} catch (error) {
-			setLoading(false);
-			setError(error.message);
+			dispatch(signupFailure(error.message));
 		}
 	}
 

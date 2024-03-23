@@ -23,7 +23,7 @@ export const addItem = async (req, res, next) => {
 
 export const getItemsByUser = async (req, res, next) => {
     try {
-        const items = await Item.find({ user: req.user._id });
+        const items = await Item.find({ owner: req.user._id });
         res.status(200).json(items);
     } catch (error) {
         next(error);

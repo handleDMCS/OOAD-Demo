@@ -67,3 +67,13 @@ export const startListing = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getListing = async (req, res, next) => {
+    try {
+        let items = await Item.find({status: "Listed"}).populate('owner', {password: 0});
+        if (!items) return next(errorHandler(400, "No items found"));
+        res.status(200).json(items);
+    } catch (error) {
+        next(error);
+    }
+}
