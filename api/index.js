@@ -7,12 +7,14 @@ import userRoutes from './routes/user.route.js';
 import itemRoutes from './routes/item.route.js';
 import listingRoutes from './routes/listing.route.js';
 import roomRoutes from './routes/room.route.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
 dotenv.config();
 
 app.use(express.json());
+app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('DB connected');

@@ -1,8 +1,8 @@
 import express from 'express';
 
 import { 
-    startListing,
-    getListing
+    getListing,
+    startListing
 } from '../controllers/listing.controller.js';
 import { verifyToken } from '../utils/auth.js';
 

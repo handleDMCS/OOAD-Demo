@@ -13,10 +13,6 @@ const itemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    category: {
-        type: String,
-        required: true
-    },
     image: {
         // using https://placehold.co/
         type: String,

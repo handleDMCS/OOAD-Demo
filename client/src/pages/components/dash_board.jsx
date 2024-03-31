@@ -1,9 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Pagination_bar from './pagination_bar'
 import Product_card from './product_card'
 
+// note
+// items is not mapped 
+// listings currently have no element
+
 export default function dash_board() {
-  const [auctions, setAuctions] = React.useState([])
+  const [auctions, setAuctions] = useState(null);
+  const [items, setItems] = useState(null);
   // get auctions list
   const fetchAuctions = async () => {
     try {
@@ -21,7 +26,31 @@ export default function dash_board() {
   }
   
   useEffect(() => {
-    fetchAuctions()
+    fetchAuctions().then(auctions =>
+      setAuctions(auctions)
+    )
+  }, [])
+
+  // get items list
+  const fetchItems = async () => {
+    try {
+      const res = await fetch('/api/item/items', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const data = await res.json()
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchItems().then(items =>
+      setItems(items)
+    )
   }, [])
 
   return (

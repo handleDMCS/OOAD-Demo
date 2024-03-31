@@ -77,3 +77,15 @@ export const getListing = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getListingById = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        let item = await Item.findById(id).populate('owner', {password: 0});
+        if (!item) return next(errorHandler(400, "Item not found"));
+        res.status(200).json(item);
+    }
+    catch (error) {
+        next(error);
+    }
+}
