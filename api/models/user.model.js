@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
     password: {
         type: String,
         required: true
@@ -22,6 +27,14 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: String,
         default: ''
+    },
+    balance: {
+        type: Number,
+        default: 0
+    },
+    reports: {
+        type: Number,
+        default: 0
     },
 });
 

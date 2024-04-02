@@ -54,3 +54,33 @@ export const getUserById = async (req, res, next) => {
         next(error);
     }
 }
+
+export const reportUser = async (req, res, next) => { 
+    const { userId } = req.body;
+    try {
+        const user = await User.findById (userId); 
+        if (!user) {
+            return next(errorHandler(400, "User not found"));
+        }
+        user.reports += 1;
+        await user.save();
+        res.status(200).json("User reported successfully");
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+export const getReportedUsers = async (req, res, next) => {
+    try {
+        const users = await User.find({ reports: { $gt: 0 } });
+        if (!users) {
+            return next(errorHandler(404, "No users found"));
+        }
+        res.status(200).json(users);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
