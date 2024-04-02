@@ -39,3 +39,20 @@ export const getRoom = async (req, res, next) => {
     res.status(500).json({ errors: [{ msg: 'Server error' }] });
   }
 };
+
+export const addBid = async (req, res, next) => {
+  const { user } = req;
+  const { roomId } = req.params;
+  const { bidAmount } = req.body;
+
+  try {
+    let room = await Room.findById(roomId);
+    room.bids.push({ user: user.id, bidAmount });
+    room = await room.save();
+    res.status(200).json(room);
+  }
+  catch (error) {
+    console.log(error);
+    res.status(500).json({ errors: [{ msg: 'Server error' }] });
+  }
+}

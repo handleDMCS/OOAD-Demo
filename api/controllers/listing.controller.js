@@ -89,3 +89,22 @@ export const getListingById = async (req, res, next) => {
         next(error);
     }
 }
+
+export const joinListing = async (req, res, next) => {
+    const { itemId } = req.body;
+    try {
+        let item = await Item.findById(itemId).populate('owner', {password: 0});
+        if (!item) return next(errorHandler(400, "Item not found"));
+        if (item.owner.toString() === req.user._id.toString()) return next(errorHandler(403, "Unauthorized"));
+        if (item.status !== "Listed") return next(errorHandler(400, "Item is not active"));
+        item.currentBidder = req.user._id;
+        await item.save();
+        io.getListingIO()
+        .to(item._id.toString())
+        .emit("listing", { action: "bid", item: item });
+        res.status(200).json("Joined listing successfully");
+    }
+    catch (error) {
+        next(error);
+    }
+}

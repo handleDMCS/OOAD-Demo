@@ -32,6 +32,15 @@ export const getItemsByUser = async (req, res, next) => {
     }
 }
 
+export const getVerifiedItems = async (req, res, next) => {
+    try {
+        const items = await Item.find({ owner: req.params.id, isVerified: true });
+        res.status(200).json(items);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const deleteItem = async (req, res, next) => {
     const { id } = req.params;
     try {
