@@ -154,7 +154,7 @@ export default function item_panel() {
             ))} */}
 
             {
-              listings.map(listing => (
+              listings && listings.map(listing => (
                 <Product_card 
                   key={listing._id}
                   handleClick={() => {}} 

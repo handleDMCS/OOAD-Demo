@@ -14,5 +14,6 @@ router.post('/start', verifyToken, startListing);
 router.get('/listings', verifyToken, getListings);
 // router.get('/:id', verifyToken, getListingById);
 router.get('/listings/my', verifyToken, getListingByUser);
+router.get('/listings/:id', verifyToken, getListingById);
 
 export default router;

@@ -3,8 +3,6 @@ import User from "../models/user.model.js";
 import io from "../socket.js";
 import { errorHandler } from "../utils/error.js";
 
-// const io = require("../socket.js");
-
 // @route POST /api/listing/start
 // @desc Start a listing
 export const startListing = async (req, res, next) => {
@@ -93,9 +91,26 @@ export const getListingById = async (req, res, next) => {
 export const getListingByUser = async (req, res, next) => {
     const owner = req.user.id;
     try {
-        let items = await Item.find({owner});
+        let items = await Item.find({owner}).populate('owner', {password: 0});
         if (!items) return next(errorHandler(400, "No items found"));
         res.status(200).json(items);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deleteListing = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        let item = await Item.findById(id).populate('owner', {password: 0});
+        if (!item) return next(errorHandler(400, "Item not found"));
+        if (item.owner._id.toString() !== req.user._id.toString()) return next(errorHandler(403, "Unauthorized"));
+        item.status = "Unlisted";
+        await item.save();
+        io.getListingIO()
+        .to(item._id.toString())
+        .emit("listing", { action: "deleted", item: item });
+        res.status(200).json("Listing deleted successfully");
     } catch (error) {
         next(error);
     }

@@ -19,7 +19,12 @@ export default function product_card({
           <X></X>
         </button>}
         <figure>
-          <img className='rounded-box' src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" />
+          <img 
+            className='rounded-box'
+            // src= {image ? image : 'https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg'} 
+            src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" 
+            alt="Shoes" 
+          />
         </figure>
         <div className="card-body card-compact">
           {/* Item name */}
