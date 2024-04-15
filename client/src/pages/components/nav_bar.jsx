@@ -22,7 +22,9 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
     <div className="flex flex-col justify-between w-72 h-screen p-2">
       <ul className="menu bg-base-200 rounded-box">
         <Link to='/profile'>
-          <li id='Home' ref={refMap['Home']} className='mb-0.5'><a>Home</a></li>
+          <li id='Home' ref={refMap['Home']} className='mb-0.5'>
+            <h2 className='Menu-title mb-0.5'>Home</h2>
+          </li>
         </Link>
         <Link to='/'>
           <li id='All-Auctions' ref={refMap['All-Auctions']} className='mb-0.5'>
@@ -39,7 +41,9 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
         </Link>
         
         <Link to='/items/my'>
-          <li id='My-Items' ref={refMap['My-Items']}><a>My Items</a></li>
+          <li id='My-Items' ref={refMap['My-Items']}>
+          <h2 className='Menu-title mb-0.5'>My Items</h2>
+          </li>
         </Link>
       </ul>      
 

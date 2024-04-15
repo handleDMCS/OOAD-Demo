@@ -13,7 +13,10 @@ export default function filter() {
         <span className="label-text">Category</span>
         <div className="overflow-y-auto h-28 border border-gray-300">
           {Array.from({ length: 10 }, (_, index) => (
-            <label className="flex items-center">
+            <label
+              key={index}
+              className="flex items-center"
+            >
               <input type="checkbox" className="form-checkbox ml-2" />
               <span className="ml-2">Option</span>
             </label>

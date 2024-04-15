@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './components/nav_bar';
 
 import {
   logoutStart,
@@ -36,10 +37,15 @@ export default function Profile () {
   }
 
   return (
-    <div>
-      Profile
+    <div className="flex flex-grow flex-row bg-base-200">
+      
+      <Navbar currentPage='Home'></Navbar>   
+      
+      <span>
+        Profile
 
-      <button onClick={handleLogout} type="submit" className="btn btn-primary">Logout</button>
+        <button onClick={handleLogout} type="submit" className="btn btn-primary">Logout</button>
+      </span>
     </div>
   )
 }
