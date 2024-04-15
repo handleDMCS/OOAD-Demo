@@ -2,30 +2,41 @@ import Item from "../models/item.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const addItem = async (req, res, next) => {
-    const { name, description, image } = req.body;
-    if (!name || !description || !image) {
+    const { name, description, initialprice, duration, image } = req.body;
+    if (!name || !description || !initialprice || !duration) {
         return next(errorHandler(400, "All fields are required"));
     }
-    const isVerified = false;
-    const owner = req.user._id;
+    if (initialprice <= 0) {
+        return next(errorHandler(400, "Initial price must be greater than 0"));
+    }
+    if (duration <= 0) {
+        return next(errorHandler(400, "Duration must be greater than 0"));
+    }
+
+    const owner = req.user.id;
     try {
         const item = new Item({
-            name,
+            productName: name,
             owner,
             description,
-            image,
-            isVerified
+            initialPrice: initialprice,
+            currentPrice: initialprice,
+            duration,
+            timer: duration,
+            status: "Listed",
+            image
         });
-        await item.save();
+
+        await Item.create(item);
         res.status(201).json(item);
     } catch (error) {
-        next(error);
+        next(error.message);
     }
 }
 
 export const getItemsByUser = async (req, res, next) => {
     try {
-        const items = await Item.find({ owner: req.params.id });
+        const items = await Item.find({ owner: req.user._id });
         res.status(200).json(items);
     } catch (error) {
         next(error);

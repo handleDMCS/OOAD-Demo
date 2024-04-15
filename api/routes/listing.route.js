@@ -1,14 +1,18 @@
 import express from 'express';
 
 import { 
-    getListing,
-    startListing
+    startListing,
+    getListings,
+    getListingById,
+    getListingByUser,
 } from '../controllers/listing.controller.js';
 import { verifyToken } from '../utils/auth.js';
 
 const router = express.Router();
 
 router.post('/start', verifyToken, startListing);
-router.get('/listings', getListing);
+router.get('/listings', verifyToken, getListings);
+// router.get('/:id', verifyToken, getListingById);
+router.get('/listings/my', verifyToken, getListingByUser);
 
 export default router;

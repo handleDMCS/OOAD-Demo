@@ -3,18 +3,13 @@ import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { loginStart, loginSuccess, loginFailure } from '../redux/slice/userSlice';
 
-import {
-  loginStart,
-  loginSuccess,
-  loginFailure
-} from '../redux/slice/userSlice'
-
-export default function login() {
+export default function Login () {
   const [form, setForm] = useState({});
-  const {loading, error} = useSelector((state) => state.user)
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const { error } = useSelector(state => state.user);
 
   const handleChange = (e) => {
     setForm({ 
@@ -24,25 +19,23 @@ export default function login() {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginStart());
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch ('/api/auth/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       });
+
       const data = await res.json();
-      console.log(data);
-      if (data.success === false) {
-        dispatch(loginFailure(data.message));
-        return;
-      }
+      if (data.success == false) {
+        dispatch(loginFailure(data.msg));
+      } 
       dispatch(loginSuccess(data));
-      navigate('/');
+      navigate('/');  
     } catch (error) {
-      dispatch(loginFailure(error.message));
+      dispatch(loginFailure(error));
     }
   }
 
@@ -59,13 +52,13 @@ export default function login() {
               Password
               <input onChange={handleChange} type="password" className="input-lg" id="password" name="password" placeholder="Enter your password" required />
             </label>
-            <p className="text-gray-600">Not a member yet? <a href="#" className="text-blue-500">Register now</a></p>
             <button type="submit" className="btn btn-primary w-full">Login</button>
+            <p className="text-gray-600">Not a member yet? <a href="/register" className="text-blue-500">Register now</a></p>
             <hr className="w-full border-t-2 border-gray-300" />
             <a href="#" className="text-blue-500 flex flex-row-reverse">Forgot password</a>
           </form>
 
-          {error && <p className="text-red-500 mt-5">{error}</p>}
+          {/* {error && <p className="text-red-500 mt-5">{error}</p>} */}
         </div>
       </div>
   )

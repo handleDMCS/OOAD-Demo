@@ -1,5 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
+import Navbar from './components/nav_bar'
+import Item_panel from './components/item_panel'
 
 export default function my_items() {
   const [form, setForm] = React.useState({});
@@ -43,37 +45,10 @@ export default function my_items() {
 
   return (
     <div>
-      my_items
-
-      <div className='flex justify-center items-center h-screen'>
-        <div className="p-8 bg-base-200 rounded-md shadow-md">
-          <h2 className="text-2xl font-semibold mb-4">Add item test</h2>
-          <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-            <label className="form-input">
-              Item name
-              <input onChange={handleChange} type="text" id="name" className="input-lg" placeholder="Enter your username" required/>
-            </label>
-            <label className="form-input">
-              Description
-              <input onChange={handleChange} type="text" id="description" className="input-lg" placeholder="Enter your username" required/>
-            </label>
-            <label className="form-input">
-              Category
-              {/* make a dropdown */}
-              <input onChange={handleChange} type="text" id="category" className="input-lg" placeholder="Enter your username" required/>
-            </label>
-            <label className="form-input">
-              Image
-              {/* change to link  */}
-              <input onChange={handleChange} type="text" className="input-lg" id="image" name="password" placeholder="Enter your password" required />
-            </label>
-            <p className="text-gray-600">Not a member yet? <a href="#" className="text-blue-500">Register now</a></p>
-            <button type="submit" className="btn btn-primary w-full">Login</button>
-            <hr className="w-full border-t-2 border-gray-300" />
-            <a href="#" className="text-blue-500 flex flex-row-reverse">Forgot password</a>
-          </form>
-
-          {/* {error && <p className="text-red-500 mt-5">{error}</p>} */}
+      <div className='flex flex-row'>
+        <Navbar currentPage='My-Items'></Navbar>
+        <div className="flex flex-grow pt-2 pr-2 pb-2">
+          <Item_panel></Item_panel>
         </div>
       </div>
     </div>

@@ -23,19 +23,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    // using https://avatar.iran.liara.run/public
-    avatar: {
-        type: String,
-        default: ''
-    },
-    balance: {
-        type: Number,
-        default: 0
-    },
-    reports: {
-        type: Number,
-        default: 0
-    },
 });
 
 const User = mongoose.model('User', userSchema);

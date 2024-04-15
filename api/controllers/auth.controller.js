@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
-export const signup = async (req, res, next) => {
+export const register = async (req, res, next) => {
     const { firstname, lastname, username, email, password, confpassword } = req.body;
     console.log(req.body);
 
@@ -23,18 +23,28 @@ export const signup = async (req, res, next) => {
         const avatar = `https://avatar.iran.liara.run/username?username=${firstname}+${lastname}`;
         const hashedPassword = bcryptjs.hashSync(password, 10);
 
-        await User.create({
+        const user = {
             firstname,
             lastname,
             username,
             email,
             password: hashedPassword,
             avatar,
-        });
+        };
 
-        res.status(201).json("User created successfully");
-    }
-    catch (error) {
+        await User.create(user);
+
+        const payload = {
+            user: {
+                id: user._id,
+                username: user.username,
+            }
+        }   
+        jwt.sign(payload, process.env.JWT_SECRET, {expiresIn: 3600}, (err, token) => {
+            if (err) throw err;
+            res.status(200).json({token});
+        });
+    } catch (error) {
         next(error);
     }
 }

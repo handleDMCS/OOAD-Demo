@@ -2,18 +2,13 @@ import React from 'react'
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { signupFailure, signupStart, signupSuccess } from '../redux/slice/userSlice';
 
-import {
-	signupStart,
-	signupSuccess,
-	signupFailure,
-} from '../redux/slice/userSlice';
-
-export default function register() {
+export default function Register () {
   const [formData, setFormData] = useState({});
-	const {loading, error} = useSelector((state) => state.user);
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
+  const { loading, error } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
 	const handleChange = (e) => {
 		setFormData(
@@ -26,28 +21,27 @@ export default function register() {
 	
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		dispatch(signupStart());
-		try {
-			const res = await fetch('/api/auth/signup', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(formData),
-			}
-			);
-			const data = await res.json();
-			console.log(data)
-			if(data.success === false) {
-				dispatch(signupFailure(data.message));
-				return;
-			}
-			dispatch(signupSuccess(data));
-			navigate('/login')
-			// console.log(data)
-		} catch (error) {
-			dispatch(signupFailure(error.message));
-		}
+
+    try {
+      dispatch(signupStart());
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+      if (data.success == false) {
+        dispatch(signupFailure(data.msg));
+        return;
+      } 
+      dispatch(signupSuccess(data));
+      navigate('/login');
+      
+    } catch (err) {
+      dispatch(signupFailure(err));
+    }
 	}
 
   return (
@@ -83,7 +77,7 @@ export default function register() {
             <button disabled={loading} type="submit" className="btn btn-primary w-full">Register</button>
           </form>
 
-          {error && <p className="text-red-500 mt-5">{error}</p>}
+          {/* {error && <p className="text-red-500 mt-5">{error}</p>} */}
         </div>
       </div>
     </div>
