@@ -3,8 +3,17 @@ import Pagination_bar from './pagination_bar'
 import Product_card from './product_card'
 import Item_panel from './item_panel'
 
+import { useNavigate } from 'react-router-dom'
+
 function Auction_Panel() {
   const [listings, setListings] = useState([]);
+
+  const navigate = useNavigate();
+
+  // navigate to an auction room
+  const handleAuctionClick = (id) => {
+    navigate(`/auction/${id}`);
+  }
 
   // get auctions list
   useEffect(() => {
@@ -32,18 +41,11 @@ function Auction_Panel() {
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
-            {/* {[...Array(12)].map((_, index) => (
-              <Product_card handleClick={() => {document.getElementById('item-info').showModal();}} 
-              canDelete
-              handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
-              />
-            ))} */}
-
             {
               listings && listings.map(listing => (
                 <Product_card 
                   key={listing._id}
-                  handleClick={() => {}} 
+                  handleClick={() => {handleAuctionClick(listing._id);}} 
                   canDelete
                   handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
                   name={listing.productName}

@@ -76,24 +76,23 @@ export const getListings = async (req, res, next) => {
     }
 }
 
-export const getListingById = async (req, res, next) => {
-    const { id } = req.params;
-    try {
-        let item = await Item.findById(id).populate('owner', {password: 0});
-        if (!item) return next(errorHandler(400, "Item not found"));
-        res.status(200).json(item);
-    }
-    catch (error) {
-        next(error);
-    }
-}
-
 export const getListingByUser = async (req, res, next) => {
     const owner = req.user.id;
     try {
         let items = await Item.find({owner}).populate('owner', {password: 0});
         if (!items) return next(errorHandler(400, "No items found"));
         res.status(200).json(items);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getListingById = async (req, res, next) => {
+    const listingId = req.params.id;
+    try {
+        let item = await Item.findById(listingId).populate('owner', {password: 0});
+        if (!item) return next(errorHandler(400, "Item not found"));
+        res.status(200).json(item);
     } catch (error) {
         next(error);
     }

@@ -2,7 +2,32 @@ import React from 'react'
 import Room_info from './components/room_info'
 import Room_bid from './components/room_bid'
 
-export default function auction_room() {
+import { useState } from 'react'
+import { useEffect } from 'react'
+
+export default function auction_room(id) {
+  const [item, setItem] = useState({})
+
+  // fetch item info
+  useEffect(() => {
+    const fetchItem = async (id) => {
+      try {
+        const res = await fetch(`/api/listing/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const data = await res.json();
+        setItem(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchItem();
+    console.log(item);
+  }, [])
+
   return (
     <div className='flex w-screen h-screen p-2 gap-2'>
         <div className="flex basis-1/2 bg-base-200 rounded-md">

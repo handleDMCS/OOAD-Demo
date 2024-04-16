@@ -28,7 +28,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Auctions />} />
-          <Route path='/room/:id' element={<Auction_room />}></Route>
+          <Route path='/auction/:id' element={<Auction_room />}></Route>
         </Route>
 
         <Route path='*' element={<NotFound />} />

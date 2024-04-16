@@ -51,8 +51,8 @@ function Description(props) {
         <span className="font-bold">Description</span>
       </div>
 
-      <textarea className="border-4 textarea shadow-md w-full min-h-48 flex-grow text-lg font-mono" style={{resize: 'none'}} readOnly>
-        {content}
+      <textarea className="border-4 textarea shadow-md w-full min-h-48 flex-grow text-lg font-mono" value={content} style={{resize: 'none'}} readOnly>
+        {/* {content} */}
       </textarea> 
     </div>
   )
