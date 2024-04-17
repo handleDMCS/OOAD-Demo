@@ -58,11 +58,21 @@ function Description(props) {
   )
 }
 
-export default function room_info() {
+export default function room_info(
+  {host, name, start, end, startingPrice, priceStep, info}
+) {
   return (
     <div className='w-full flex flex-col'>
       <Slide pics={sampleImg}></Slide>
-      <Description host = 'cac' name ='abc' start='1/1/2023' end='1/1/2024' startingPrice='10000' priceStep='1000' info={Array(1000).fill('?').join('')}></Description>
+      <Description 
+        host={host} 
+        name={name}
+        start={start}
+        end={end}
+        startingPrice={startingPrice} 
+        priceStep={priceStep}
+        info={info}
+      ></Description>
     </div>
   )
 }

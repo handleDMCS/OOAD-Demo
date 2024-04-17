@@ -3,7 +3,7 @@ import Pagination_bar from './pagination_bar'
 import Product_card from './product_card'
 import Item_panel from './item_panel'
 
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Auction_Panel() {
   const [listings, setListings] = useState([]);
@@ -41,8 +41,7 @@ function Auction_Panel() {
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
-            {
-              listings && listings.map(listing => (
+            { listings && listings.map(listing => (
                 <Product_card 
                   key={listing._id}
                   handleClick={() => {handleAuctionClick(listing._id);}} 

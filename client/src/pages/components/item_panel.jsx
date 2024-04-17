@@ -5,7 +5,10 @@ import { FilePlus } from 'react-feather'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { addItemStart, addItemSuccess, addItemFailure } from '../../redux/slice/itemSlice';
+import { 
+  addItemStart, addItemSuccess, addItemFailure,
+  deleteItemStart, deleteItemSuccess, deleteItemFailure,
+} from '../../redux/slice/itemSlice';
 
 function Add_Item_Info() {
   const [item, setItem] = useState({});
@@ -84,6 +87,36 @@ function Add_Item_Info() {
 }
 
 function Delete_item() {
+  const dispatch = useDispatch();
+  const { item } = useSelector((state) => state.item);
+  const navigate = useNavigate();
+
+  console.log(item);
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    dispatch(deleteItemStart());
+    try {
+      const res = await fetch(`/api/item/delete/${item.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+      });
+      const data = await res.json();
+      console.log(data)
+      if (data.success === false) {
+        dispatch(deleteItemFailure(data.message));
+        return;
+      }
+      dispatch(deleteItemSuccess(data));
+      navigate(0);
+    } catch (error) {
+      dispatch(deleteItemFailure(error.message));
+    }
+  }
+
   return (
     <dialog id="delete-item" className="modal">
       <div className="modal-box">
@@ -91,7 +124,7 @@ function Delete_item() {
         <p className="py-4">You won't be able to revert this</p>
         <div className="modal-action">
           <form method="dialog">
-            <button className="btn btn-primary mr-2">Yes, delete it!</button>
+            <button onClick={handleDelete} className="btn btn-primary mr-2">Yes, delete it!</button>
             <button className="btn">Cancel</button>
           </form>
         </div>

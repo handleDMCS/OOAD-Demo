@@ -36,12 +36,25 @@ export const itemSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+        deleteItemStart: (state) => {
+            state.loading = true;
+        },
+        deleteItemSuccess: (state, action) => {
+            state.items = state.items.filter(item => item._id !== action.payload);
+            state.error = null;
+            state.loading = false;
+        },
+        deleteItemFailure: (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+        },
     },
 });
 
 export const {
     addItemStart, addItemSuccess, addItemFailure,
-    fetchItemsStart, fetchItemsSuccess, fetchItemsFailure
+    fetchItemsStart, fetchItemsSuccess, fetchItemsFailure,
+    deleteItemStart, deleteItemSuccess, deleteItemFailure,
 } = itemSlice.actions;
 
 export default itemSlice.reducer;
