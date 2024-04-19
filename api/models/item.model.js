@@ -26,6 +26,10 @@ const itemSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    jump: {
+        type: Number,
+        required: true
+    },
     duration: {
         type: Number,
         required: true

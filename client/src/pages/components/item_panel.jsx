@@ -13,7 +13,9 @@ import {
 function Add_Item_Info() {
   const [item, setItem] = useState({});
 
-  const { loading, error } = useSelector((state) => state.item);
+  // const { loading, error } = useSelector((state) => state.item);
+  const [error, setError] = useState('');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,6 +46,108 @@ function Add_Item_Info() {
       dispatch(addItemSuccess(data));
       navigate(0);
     } catch (error) {
+      setError(error.message);
+      dispatch(addItemFailure(error.message));
+    }
+  }
+
+  return (
+    <dialog id="add-item" className="modal">
+      <div className="modal-box w-1/2 max-w-5xl">
+        <h3 className="font-bold text-2xl mb-5">Add Item</h3>
+        <form onSubmit={handleAddItem} className='flex flex-col gap-2'>
+          <label className="form-input">
+            Product Images
+            <input id='image' onChange={handleChangeAddItem} type="file" className="input-lg" required/>
+          </label>
+
+          <label className="form-input">
+            Item
+            <input id='name' onChange={handleChangeAddItem} type="text" className="input-lg" placeholder="Name your item" required/>
+          </label>
+          <label className="form-input">
+            Initial Price
+            <input id='initialprice' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Original price" required/>
+          </label>
+          <label className="form-input">
+            Price Step
+            <input id='jump' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Price step" required/>
+          </label>
+          <textarea id='description' onChange={handleChangeAddItem} className="textarea textarea-bordered min-h-48 input-lg" placeholder="Description"></textarea>
+          <label className="form-input">
+            Duration
+            <input id='duration' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Duration in seconds" required/>
+          </label>
+          <button type="submit" className="btn btn-primary w-full">Save</button>
+
+          {error && <p className="text-red-500">{error}</p>}
+        </form>
+
+        <div className="modal-action">
+          <form method="dialog">
+            <button className="btn">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+  )
+}
+
+function Edit_Item_Info() {
+  const [item, setItem] = useState({});
+
+  // const { loading, error } = useSelector((state) => state.item);
+  const [error, setError] = useState('');
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      try {
+        const res = await fetch(`/api/item/${item.id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await res.json();
+        setItem(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    }
+    fetchItem();
+  }, [item.id]);
+
+  const handleChangeAddItem = (e) => {
+    setItem({
+      ...item,
+      [e.target.id]: e.target.value
+    });
+  }
+
+  const handleAddItem = async (e) => {
+    e.preventDefault();
+    dispatch(addItemStart());
+    try {
+      const res = await fetch('/api/item/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+      });
+      const data = await res.json();
+      console.log(data)
+      if (data.success === false) {
+        dispatch(addItemFailure(data.message));
+        return;
+      }
+      dispatch(addItemSuccess(data));
+      navigate(0);
+    } catch (error) {
+      setError(error.message);
       dispatch(addItemFailure(error.message));
     }
   }
@@ -65,6 +169,10 @@ function Add_Item_Info() {
           <label className="form-input">
             Initial Price
             <input id='initialprice' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Original price" required/>
+          </label>
+          <label className="form-input">
+            Price Step
+            <input id='jump' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Price step" required/>
           </label>
           <textarea id='description' onChange={handleChangeAddItem} className="textarea textarea-bordered min-h-48 input-lg" placeholder="Description"></textarea>
           <label className="form-input">
@@ -90,8 +198,6 @@ function Delete_item() {
   const dispatch = useDispatch();
   const { item } = useSelector((state) => state.item);
   const navigate = useNavigate();
-
-  console.log(item);
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -173,12 +279,11 @@ export default function item_panel() {
     <div className="flex flex-grow flex-col bg-base-200">
       <Add_Item_Info></Add_Item_Info>
       <Delete_item></Delete_item>
+      <Edit_Item_Info></Edit_Item_Info>
       <Pagination_bar></Pagination_bar>        
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
-            <Add_item></Add_item>
-
             {/* {[...Array(12)].map((_, index) => (
               <Product_card handleClick={() => {document.getElementById('item-info').showModal();}} 
               canDelete
@@ -190,7 +295,10 @@ export default function item_panel() {
               listings && listings.map(listing => (
                 <Product_card 
                   key={listing._id}
-                  handleClick={() => {}} 
+                  handleClick={(e) => {
+                    e.stopPropagation(); 
+                    document.getElementById('item-info').showModal();
+                  }} 
                   canDelete
                   handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
                   name={listing.productName}
@@ -202,6 +310,8 @@ export default function item_panel() {
                 />
               ))
             }
+            
+            <Add_item></Add_item>
           </div>
         </div>
       </div>

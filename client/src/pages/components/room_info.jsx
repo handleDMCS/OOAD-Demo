@@ -61,6 +61,7 @@ function Description(props) {
 export default function room_info(
   {host, name, start, end, startingPrice, priceStep, info}
 ) {
+  // console.log(host, name, start, end, startingPrice, priceStep, info)
   return (
     <div className='w-full flex flex-col'>
       <Slide pics={sampleImg}></Slide>

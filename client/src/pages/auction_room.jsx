@@ -23,7 +23,7 @@ export default function auction_room() {
           }
         })
         const data = await res.json();
-        // console.log(data);
+        console.log(data);
         setItem(data);
       } catch (error) {
         console.log(error);
@@ -44,7 +44,7 @@ export default function auction_room() {
             start={item.createdAt}
             end={item.createdAt}
             startingPrice={item.initialPrice}
-            priceStep={item.priceStep}
+            priceStep={item.jump}
             info={item.description}   
           ></Room_info>
         </div>

@@ -2,8 +2,8 @@ import Item from "../models/item.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const addItem = async (req, res, next) => {
-    const { name, description, initialprice, duration, image } = req.body;
-    if (!name || !description || !initialprice || !duration) {
+    const { name, description, initialprice, jump, duration, image } = req.body;
+    if (!name || !description || !initialprice || !jump || !duration) {
         return next(errorHandler(400, "All fields are required"));
     }
     if (initialprice <= 0) {
@@ -11,6 +11,9 @@ export const addItem = async (req, res, next) => {
     }
     if (duration <= 0) {
         return next(errorHandler(400, "Duration must be greater than 0"));
+    }
+    if (jump <= 0) {
+        return next(errorHandler(400, "Price step must be greater than 0"));
     }
 
     const owner = req.user.id;
@@ -21,6 +24,7 @@ export const addItem = async (req, res, next) => {
             description,
             initialPrice: initialprice,
             currentPrice: initialprice,
+            jump,
             duration,
             timer: duration,
             status: "Listed",
@@ -71,8 +75,8 @@ export const deleteItem = async (req, res, next) => {
 }
 
 export const updateItem = async (req, res, next) => {
-    const { name, description, image } = req.body;
-    if (!name && !description && !image) {
+    const { name, description, initialprice, jump, duration, image } = req.body;
+    if (!name && !description && !image && !initialprice && !jump && !duration) {
         return next(errorHandler(400, "At least 1 field is required"));
     }
     try {
