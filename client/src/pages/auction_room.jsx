@@ -5,12 +5,13 @@ import Room_bid from './components/room_bid'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 export default function auction_room() {
   const [item, setItem] = useState({})
-
+  const user = useSelector(state => state.user.user);
   const params = useParams();
-  // console.log(params);
+  console.log(user);
 
   // fetch item info
   useEffect(() => {
@@ -32,7 +33,6 @@ export default function auction_room() {
     fetchItem(params.id);
   }, [])
   
-  // console.log(item);
   const host = item.owner ? item.owner.firstname + ' ' + item.owner.lastname : '';
 
   return (
@@ -50,10 +50,12 @@ export default function auction_room() {
         </div>
         <div className="flex basis-1/2 bg-base-200 rounded-md">
           <Room_bid 
-            initTime={100} 
-            budget={100000} 
-            startingPrice={10000} 
-            priceStep={5000}
+            auctionID={params.id}
+            userID={user._id}
+            initTime={item.duration ? item.duration : 1000} 
+            budget={user.balance ?? 100000} 
+            startingPrice={item.initialPrice} 
+            priceStep={item.jump}
           ></Room_bid>
         </div>
     </div>
