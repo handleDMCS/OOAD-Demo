@@ -29,7 +29,7 @@ function Slide({pics}) {
       </div>
       <div className="flex flex-row gap-2 justify-center">
         {Array.from({ length: cnt }, (_, index) => (
-          (index == currId) ? <CheckCircle></CheckCircle> : <Circle></Circle>
+          (index == currId) ? <CheckCircle key={index}></CheckCircle> : <Circle key={index}></Circle>
         ))}
       </div>
     </div>

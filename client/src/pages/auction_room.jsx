@@ -51,7 +51,6 @@ export default function auction_room() {
         <div className="flex basis-1/2 bg-base-200 rounded-md">
           <Room_bid 
             auctionID={params.id}
-            userID={user._id}
             initTime={item.duration ? item.duration : 1000} 
             budget={user.balance ?? 100000} 
             startingPrice={item.initialPrice} 

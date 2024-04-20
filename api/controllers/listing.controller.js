@@ -121,13 +121,13 @@ export const userBid = async (req, res, next) => {
   const { id } = req.params;
   const { bid } = req.body;
   const user = req.user;
-	console.log(id);
-	console.log(bid);
-	console.log(user);
+	console.log("id", id);
+	console.log("bid", bid);
+	console.log("user", user);
 
   try {
     let item = await Item.findById(id).populate("owner", { password: 0 });
-    console.log(item);
+    console.log("item", item);
 		
 		if (!item) 
 			return next(errorHandler(400, "Item not found"));
@@ -142,7 +142,10 @@ export const userBid = async (req, res, next) => {
 
     item.currentPrice = bid;
     item.currentBidder = req.user.id;
-    item.bids.push({ user: req.user.id , amount: bid });
+    item.bids.push({ 
+      user:  req.user.id,
+      amount: bid 
+    });
     await item.save();
     // io.getListingIO()
     //   .to(item._id.toString())

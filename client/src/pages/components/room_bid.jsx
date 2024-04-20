@@ -8,11 +8,12 @@ import { Minus } from "react-feather";
 import { CreditCard } from "react-feather";
 import { ShoppingCart } from "react-feather";
 import { useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function SubmitBid(
   { auctionID, currentBid }
 ) {
+  const navigate = useNavigate();
   const handleSubmit = async () => {
     console.log(currentBid);
     try {
@@ -27,6 +28,9 @@ function SubmitBid(
       });
       const data = await res.json();
       console.log(data);
+
+      // change to use socket.io later
+      navigate(0);
     } catch (error) {
       console.log(error);
     }
@@ -80,12 +84,13 @@ function CountDown({ remTime, setRemTime, initTime }) {
     const thour = Math.floor((remTime % toSec.day) / toSec.hour);
     const tmin = Math.floor((remTime % toSec.hour) / toSec.min);
     const tsec = remTime % toSec.min;
+    const tpercent = ((initTime - remTime) * 100) / initTime;
 
     setDay(tday);
     setHour(thour);
     setMin(tmin);
     setSec(tsec);
-    setPercent(((initTime - remTime) * 100) / initTime);
+    setPercent(tpercent);
   }, [remTime]);
 
   return (
@@ -125,21 +130,60 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
   const [topBids, setTopBids] = useState(Bids);
 
   useEffect(() => {
-    const sorted = [...Bids].sort((a, b) => b.bid - a.bid);
-    const newTopBids = Array(include)
-      .fill({ name: "user", bid: "-1", profileLink: "#" })
-      .map((element, index) => {
-        if (index >= sorted.length) return element;
-        return sorted[index];
-      });
+    const sorted = [...Bids].sort((a, b) => b.bid - a.bid).reverse();
+    console.log(sorted);
+    // const newTopBids = Array(include)
+    //   .fill({ name: "user", bid: "-1", profileLink: "#" })
+    //   .map((element, index) => {
+    //     if (index >= sorted.length) return element;
+    //     return sorted[index];
+    //   })
+    //   ;
+    
+    const len = sorted.length > include ? include : sorted.length;
+    const newTopBids = sorted.slice(0, len);
 
     setTopBids(newTopBids);
+
+    // convert user id to user name
+    const fetchUser = async (id) => {
+      try {
+        const res = await fetch(`/api/user/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const data = await res.json();
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchAllUsers = async () => {
+      const promises = newTopBids.map(async (bid) => {
+        const user = await fetchUser(bid.user);
+        return {
+          ...bid,
+          user: user.firstname + " " + user.lastname,
+          profileLink: `/user/${bid.user}`,
+        };
+      });
+
+      const users = await Promise.all(promises);
+      setTopBids(users);
+    };
+
+    fetchAllUsers();
+    
   }, [Bids]);
 
   return (
     <div className="bg-white rounded-box flex flex-col p-2 gap-2 shadow-md">
-      {topBids.map((user, index) => (
+      {topBids && topBids.map((user, index) => (
         <div
+          key={index}
           className="flex flex-row gap-2"
           style={{ visibility: user.bid === "-1" ? "hidden" : "visible" }}
         >
@@ -157,9 +201,11 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
             } basis-11/12 justify-between items-center p-2`}
           >
             <span className={`text-lg font-bold`}>
-              {`${user.name}`} 
-              <Volume2 className="inline"></Volume2>{" "}
-              {`${user.bid}`}
+              {`${user.user}`} 
+              {" "}
+              <Volume2 className="inline mb-0.5"></Volume2>
+              {" "}
+              {`${user.amount}`}
             </span>
             {index === 0 && (
               <button
@@ -181,7 +227,6 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
 
 function NewBid({
   auctionID,
-  userID,
   budget,
   startingPrice,
   priceStep,
@@ -302,21 +347,8 @@ function NewBid({
   );
 }
 
-const sampleTopBids = [
-  { name: "user_1", bid: "10000", profileLink: "#" },
-  { name: "user_5", bid: "50000", profileLink: "#" },
-  { name: "user_2", bid: "20000", profileLink: "#" },
-  { name: "user_3", bid: "20100", profileLink: "#" },
-  { name: "user_4", bid: "40000", profileLink: "#" },
-  { name: "user_3", bid: "20100", profileLink: "#" },
-  { name: "user_3", bid: "20100", profileLink: "#" },
-  { name: "user_3", bid: "20100", profileLink: "#" },
-  { name: "user_4", bid: "40000", profileLink: "#" },
-];
-
 export default function room_bid({
   auctionID,
-  userID,
   budget,
   startingPrice,
   priceStep,
@@ -357,7 +389,7 @@ export default function room_bid({
       ></CountDown>
       <LeaderBoard
         inputRef={inputRef}
-        Bids={Bids ? Bids : sampleTopBids}
+        Bids={Bids}
         include={5}
         currentBid={currentBid}
         setCurrentBid={setCurrentBid}
@@ -368,7 +400,6 @@ export default function room_bid({
         setCurrentBid={setCurrentBid}
         currentBid={currentBid}
         auctionID={auctionID}
-        userID={userID}
         budget={budget}
         startingPrice={startingPrice}
         priceStep={priceStep}
