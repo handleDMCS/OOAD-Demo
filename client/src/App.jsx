@@ -7,17 +7,18 @@ import Register from './pages/register'
 import Login from './pages/login'
 import Auction_room from './pages/auction_room'
 import My_items from './pages/my_items'
-
+import Profile from './pages/profile'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <Auction_room></Auction_room>
+    // <Auction_room></Auction_room>
     // <Auctions></Auctions>
     // <Login></Login>
     // <Register></Register>
     // <My_items></My_items>
+    <Profile></Profile>
   )
 }
 
