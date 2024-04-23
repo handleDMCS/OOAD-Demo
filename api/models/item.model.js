@@ -30,6 +30,10 @@ const itemSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    startTime: {
+        type: Date,
+        required: true,
+    },
     duration: {
         type: Number,
         required: true

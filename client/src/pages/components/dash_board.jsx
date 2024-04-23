@@ -14,9 +14,24 @@ function Auction_Panel() {
   const handleAuctionClick = (id) => {
     navigate(`/auction/${id}`);
   }
-
+  
+  // start auction on time
   // get auctions list
   useEffect(() => {
+    const startAuction = async () => {
+      try {
+        const res = await fetch('/api/listing/start', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const data = await res.json();
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
     const fetchAuctions = async () => {
       try {
         const res = await fetch('/api/listing/listings', {
@@ -32,7 +47,15 @@ function Auction_Panel() {
         console.log(error);
       }
     }
-    fetchAuctions();
+    
+    const interval = setInterval(() => {
+      startAuction();
+      fetchAuctions();
+    } , 1000);
+
+    return () => {
+      clearInterval(interval);
+    }
   }, [])
 
   return (
@@ -45,7 +68,7 @@ function Auction_Panel() {
                 <Product_card 
                   key={listing._id}
                   handleClick={() => {handleAuctionClick(listing._id);}} 
-                  canDelete
+                  canDelete={false}
                   handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
                   name={listing.productName}
                   owner={listing.owner.firstname + ' ' + listing.owner.lastname}

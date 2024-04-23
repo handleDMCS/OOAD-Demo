@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import Pagination_bar from './pagination_bar'
-import Product_card from './product_card'
-import { FilePlus } from 'react-feather'
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import Pagination_bar from "./pagination_bar";
+import Product_card from "./product_card";
+import { FilePlus } from "react-feather";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import { 
+import {
   addItemStart, addItemSuccess, addItemFailure,
   deleteItemStart, deleteItemSuccess, deleteItemFailure,
-} from '../../redux/slice/itemSlice';
+  fetchItemsStart, fetchItemsSuccess, fetchItemsFailure,
+  updateItemStart, updateItemSuccess, updateItemFailure,
+} from "../../redux/slice/itemSlice";
 
 function Add_Item_Info() {
   const [item, setItem] = useState({});
 
   // const { loading, error } = useSelector((state) => state.item);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,23 +24,23 @@ function Add_Item_Info() {
   const handleChangeAddItem = (e) => {
     setItem({
       ...item,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
-  }
+  };
 
   const handleAddItem = async (e) => {
     e.preventDefault();
     dispatch(addItemStart());
     try {
-      const res = await fetch('/api/item/add', {
-        method: 'POST',
+      const res = await fetch("/api/item/add", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(item)
+        body: JSON.stringify(item),
       });
       const data = await res.json();
-      console.log(data)
+      console.log(data);
       if (data.success === false) {
         dispatch(addItemFailure(data.message));
         return;
@@ -49,36 +51,88 @@ function Add_Item_Info() {
       setError(error.message);
       dispatch(addItemFailure(error.message));
     }
-  }
+  };
 
   return (
     <dialog id="add-item" className="modal">
       <div className="modal-box w-1/2 max-w-5xl">
         <h3 className="font-bold text-2xl mb-5">Add Item</h3>
-        <form onSubmit={handleAddItem} className='flex flex-col gap-2'>
+        <form onSubmit={handleAddItem} className="flex flex-col gap-2">
           <label className="form-input">
             Product Images
-            <input id='image' onChange={handleChangeAddItem} type="file" className="input-lg" required/>
+            <input
+              id="image"
+              onChange={handleChangeAddItem}
+              type="file"
+              className="input-lg"
+              required
+            />
           </label>
 
           <label className="form-input">
             Item
-            <input id='name' onChange={handleChangeAddItem} type="text" className="input-lg" placeholder="Name your item" required/>
+            <input
+              id="name"
+              onChange={handleChangeAddItem}
+              type="text"
+              className="input-lg"
+              placeholder="Name your item"
+              required
+            />
           </label>
           <label className="form-input">
             Initial Price
-            <input id='initialprice' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Original price" required/>
+            <input
+              id="initialprice"
+              onChange={handleChangeAddItem}
+              type="number"
+              className="input-lg"
+              placeholder="Original price"
+              required
+            />
           </label>
           <label className="form-input">
             Price Step
-            <input id='jump' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Price step" required/>
+            <input
+              id="jump"
+              onChange={handleChangeAddItem}
+              type="number"
+              className="input-lg"
+              placeholder="Price step"
+              required
+            />
           </label>
-          <textarea id='description' onChange={handleChangeAddItem} className="textarea textarea-bordered min-h-48 input-lg" placeholder="Description"></textarea>
+          <textarea
+            id="description"
+            onChange={handleChangeAddItem}
+            className="textarea textarea-bordered min-h-48 input-lg"
+            placeholder="Description"
+          ></textarea>
           <label className="form-input">
             Duration
-            <input id='duration' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Duration in seconds" required/>
+            <input
+              id="duration"
+              onChange={handleChangeAddItem}
+              type="number"
+              className="input-lg"
+              placeholder="Duration in seconds"
+              required
+            />
           </label>
-          <button type="submit" className="btn btn-primary w-full">Save</button>
+          <label className="form-input">
+            Start Time
+            <input
+              id="startTime"
+              onChange={handleChangeAddItem}
+              type="datetime-local"
+              className="input-lg"
+              placeholder=""
+              required
+            />
+          </label>
+          <button type="submit" className="btn btn-primary w-full">
+            Save
+          </button>
 
           {error && <p className="text-red-500">{error}</p>}
         </form>
@@ -90,96 +144,140 @@ function Add_Item_Info() {
         </div>
       </div>
     </dialog>
-  )
+  );
 }
 
 function Edit_Item_Info() {
+  const currentItem = useSelector((state) => state.item.item);
   const [item, setItem] = useState({});
-
-  // const { loading, error } = useSelector((state) => state.item);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchItem = async () => {
-      try {
-        const res = await fetch(`/api/item/${item.id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        const data = await res.json();
-        setItem(data);
-      } catch (error) {
-        setError(error.message);
-      }
-    }
-    fetchItem();
-  }, [item.id]);
+  console.log(currentItem);
+  console.log(item);
 
-  const handleChangeAddItem = (e) => {
+  useEffect(() => {
+    setItem({
+      productName: currentItem.productName,
+      initialPrice: currentItem.initialPrice,
+      jump: currentItem.jump,
+      description: currentItem.description,
+      duration: currentItem.duration,
+      image: currentItem.image,
+    });
+    dispatch(updateItemStart(currentItem));
+  }, [currentItem]);
+
+  const handleChangeEditItem = (e) => {
     setItem({
       ...item,
-      [e.target.id]: e.target.value
+      [e.target.id]: e.target.value,
     });
-  }
+  };
+  
 
-  const handleAddItem = async (e) => {
+  const handleEditItem = async (e) => {
     e.preventDefault();
-    dispatch(addItemStart());
+
+    const id = currentItem._id;
+    console.log(item);
     try {
-      const res = await fetch('/api/item/add', {
-        method: 'POST',
+      const res = await fetch(`/api/item/update/${id}`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(item)
+        body: JSON.stringify(item),
       });
       const data = await res.json();
-      console.log(data)
+      console.log(data);
       if (data.success === false) {
-        dispatch(addItemFailure(data.message));
+        dispatch(updateItemFailure(data.message));
         return;
       }
-      dispatch(addItemSuccess(data));
+      dispatch(updateItemSuccess(data));
       navigate(0);
     } catch (error) {
       setError(error.message);
-      dispatch(addItemFailure(error.message));
+      dispatch(updateItemFailure(error.message));
     }
-  }
+  };
 
   return (
     <dialog id="item-info" className="modal">
       <div className="modal-box w-1/2 max-w-5xl">
-        <h3 className="font-bold text-2xl mb-5">Add Item</h3>
-        <form onSubmit={handleAddItem} className='flex flex-col gap-2'>
+        <h3 className="font-bold text-2xl mb-5">Update Item</h3>
+        <form onSubmit={handleEditItem} className="flex flex-col gap-2">
           <label className="form-input">
             Product Images
-            <input id='image' onChange={handleChangeAddItem} type="file" className="input-lg" required/>
+            <input
+              id="image"
+              onChange={handleChangeEditItem}
+              type="file"
+              className="input-lg"
+            />
           </label>
 
           <label className="form-input">
-            Item
-            <input id='name' onChange={handleChangeAddItem} type="text" className="input-lg" placeholder="Name your item" required/>
+            Item name
+            <input
+              id="productName"
+              onChange={handleChangeEditItem}
+              type="text"
+              className="input-lg"
+              placeholder="Name your item"
+              defaultValue={item.productName}
+              required
+            />
           </label>
           <label className="form-input">
             Initial Price
-            <input id='initialprice' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Original price" required/>
+            <input
+              id="initialPrice"
+              onChange={handleChangeEditItem}
+              type="number"
+              className="input-lg"
+              placeholder="Original price"
+              defaultValue={item.initialPrice}
+              required
+            />
           </label>
           <label className="form-input">
             Price Step
-            <input id='jump' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Price step" required/>
+            <input
+              id="jump"
+              onChange={handleChangeEditItem}
+              type="number"
+              className="input-lg"
+              placeholder="Price step"
+              defaultValue={item.jump}
+              required
+            />
           </label>
-          <textarea id='description' onChange={handleChangeAddItem} className="textarea textarea-bordered min-h-48 input-lg" placeholder="Description"></textarea>
+          <textarea
+            id="description"
+            onChange={handleChangeEditItem}
+            className="textarea textarea-bordered min-h-48 input-lg"
+            placeholder="Description"
+            defaultValue={item.description}
+          ></textarea>
           <label className="form-input">
             Duration
-            <input id='duration' onChange={handleChangeAddItem} type="number" className="input-lg" placeholder="Duration in seconds" required/>
+            <input
+              id="duration"
+              onChange={handleChangeEditItem}
+              type="number"
+              className="input-lg"
+              placeholder="Duration in seconds"
+              value={item.duration}
+              required
+            />
           </label>
-          <button type="submit" className="btn btn-primary w-full">Save</button>
+          <button type="submit" className="btn btn-primary w-full">
+            Update
+          </button>
 
           {error && <p className="text-red-500">{error}</p>}
         </form>
@@ -191,27 +289,30 @@ function Edit_Item_Info() {
         </div>
       </div>
     </dialog>
-  )
+  );
 }
 
 function Delete_item() {
+  const itemID = useSelector((state) => state.item.item._id);
+  const item = useSelector((state) => state.item.item);
+
   const dispatch = useDispatch();
-  const { item } = useSelector((state) => state.item);
   const navigate = useNavigate();
 
   const handleDelete = async (e) => {
     e.preventDefault();
+
     dispatch(deleteItemStart());
     try {
-      const res = await fetch(`/api/item/delete/${item.id}`, {
-        method: 'DELETE',
+      const res = await fetch(`/api/item/delete/${itemID}`, {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(item)
+        body: JSON.stringify(item),
       });
       const data = await res.json();
-      console.log(data)
+      console.log(data);
       if (data.success === false) {
         dispatch(deleteItemFailure(data.message));
         return;
@@ -221,7 +322,7 @@ function Delete_item() {
     } catch (error) {
       dispatch(deleteItemFailure(error.message));
     }
-  }
+  };
 
   return (
     <dialog id="delete-item" className="modal">
@@ -230,48 +331,63 @@ function Delete_item() {
         <p className="py-4">You won't be able to revert this</p>
         <div className="modal-action">
           <form method="dialog">
-            <button onClick={handleDelete} className="btn btn-primary mr-2">Yes, delete it!</button>
+            <button onClick={handleDelete} className="btn btn-primary mr-2">
+              Yes, delete it!
+            </button>
             <button className="btn">Cancel</button>
           </form>
         </div>
       </div>
     </dialog>
-  )
+  );
 }
 
 function Add_item() {
   return (
     <div className="p-3 card-spacing">
       <div className="card card-compact bg-base-100 shadow-xl h-full">
-        <button className="btn h-full w-full flex-col gap-5 noHover" onClick={()=>{document.getElementById('item-info').showModal();}}>
-          <FilePlus className='w-12 h-12'></FilePlus>
+        <button
+          className="btn h-full w-full flex-col gap-5 noHover"
+          onClick={() => {
+            document.getElementById("add-item").showModal();
+          }}
+        >
+          <FilePlus className="w-12 h-12"></FilePlus>
           <span className="font-lg">New Item</span>
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 export default function item_panel() {
   const [listings, setListings] = useState([]);
-  
-  // fetch user listings 
+
+  const dispatch = useDispatch();
+
+  // fetch user listings
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const res = await fetch('/api/listing/listings/my', {
-          method: 'GET',
+        dispatch(fetchItemsStart());
+        const res = await fetch("/api/listing/listings/my", {
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         });
         const data = await res.json();
+        if (data.success === false) {
+          dispatch(fetchItemsFailure(data.message));
+          return;
+        }
+        dispatch(fetchItemsSuccess(data));
         setListings(data);
         console.log(data);
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     fetchListings();
   }, []);
 
@@ -280,7 +396,7 @@ export default function item_panel() {
       <Add_Item_Info></Add_Item_Info>
       <Delete_item></Delete_item>
       <Edit_Item_Info></Edit_Item_Info>
-      <Pagination_bar></Pagination_bar>        
+      <Pagination_bar></Pagination_bar>
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
@@ -291,30 +407,33 @@ export default function item_panel() {
               />
             ))} */}
 
-            {
-              listings && listings.map(listing => (
-                <Product_card 
+            {listings &&
+              listings.map((listing) => (
+                <Product_card
                   key={listing._id}
                   handleClick={(e) => {
-                    e.stopPropagation(); 
-                    document.getElementById('item-info').showModal();
-                  }} 
+                    e.stopPropagation();
+                    dispatch(updateItemStart(listing));
+                    document.getElementById("item-info").showModal();
+                  }}
                   canDelete
-                  handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
+                  handleDelete={(e) => {
+                    e.stopPropagation();
+                    document.getElementById("delete-item").showModal();
+                  }}
                   name={listing.productName}
-                  owner={listing.owner.firstname + ' ' + listing.owner.lastname}
+                  owner={listing.owner.firstname + " " + listing.owner.lastname}
                   description={listing.description}
                   highestBid={listing.currentPrice}
                   duration={listing.timer}
                   image={listing.image}
                 />
-              ))
-            }
-            
+              ))}
+
             <Add_item></Add_item>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,8 +1,9 @@
 import Item from "../models/item.model.js";
 import { errorHandler } from "../utils/error.js";
+import { ObjectId } from "mongodb";
 
 export const addItem = async (req, res, next) => {
-    const { name, description, initialprice, jump, duration, image } = req.body;
+    const { name, description, initialprice, jump, duration, image, startTime } = req.body;
     if (!name || !description || !initialprice || !jump || !duration) {
         return next(errorHandler(400, "All fields are required"));
     }
@@ -24,10 +25,11 @@ export const addItem = async (req, res, next) => {
             description,
             initialPrice: initialprice,
             currentPrice: initialprice,
+            startTime,
             jump,
             duration,
             timer: duration,
-            status: "Listed",
+            status: "Unlisted",
             image
         });
 
@@ -75,24 +77,67 @@ export const deleteItem = async (req, res, next) => {
 }
 
 export const updateItem = async (req, res, next) => {
-    const { name, description, initialprice, jump, duration, image } = req.body;
-    if (!name && !description && !image && !initialprice && !jump && !duration) {
-        return next(errorHandler(400, "At least 1 field is required"));
+    const { productName, description, initialPrice, jump, duration, image } = req.body;
+    const id = req.params.id;
+
+    console.log("id", id);
+    console.log("productName", productName);
+    console.log("description", description);
+    console.log("initialPrice", initialPrice);
+    console.log("jump", jump);
+    console.log("duration", duration);
+    console.log("image", image);
+
+
+    if (!productName || !description || !initialPrice || !jump || !duration) {
+        return next(errorHandler(400, "All fields are required"));
     }
+
     try {
-        const item = await Item.findById(req.params.id);
+        if (initialPrice <= 0) {
+            return next(errorHandler(401, "Initial price must be greater than 0"));
+        }
+        if (duration <= 0) {
+            return next(errorHandler(402, "Duration must be greater than 0"));
+        }
+        if (jump <= 0) {
+            return next(errorHandler(403, "Price step must be greater than 0"));
+        }
+
+        const item = await Item.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        if (!item) {
+            return next(errorHandler(404, "Item not found"));
+        }
+        if (item.owner._id.toString() !== req.user.id.toString()) {
+            return next(errorHandler(405, "Unauthorized"));
+        }
+
+        // if (productName) item.productName = productName;
+        // if (productName != item.productName) item.productName = productName;
+        // if (description) item.description = description;
+        // if (initialPrice) item.initialPrice = initialPrice;
+        // if (jump) item.jump = jump;
+        // if (image) item.image = image;
+        // await item.save();
+        res.status(200).json(item);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+export const getItemById = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const item = await Item.findById(id);
         if (!item) {
             return next(errorHandler(400, "Item not found"));
         }
-        if (item.owner.toString() !== req.user._id.toString()) {
-            return next(errorHandler(403, "Unauthorized"));
-        }
-        if (name) item.name = name;
-        if (description) item.description = description;
-        if (category) item.category = category;
-        if (image) item.image = image;
-        await item.save();
-        res.status(200).json("Item updated successfully");
+        res.status(200).json(item);
     }
     catch (error) {
         next(error);
