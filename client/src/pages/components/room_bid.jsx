@@ -131,15 +131,6 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
 
   useEffect(() => {
     const sorted = [...Bids].sort((a, b) => b.bid - a.bid).reverse();
-    console.log(sorted);
-    // const newTopBids = Array(include)
-    //   .fill({ name: "user", bid: "-1", profileLink: "#" })
-    //   .map((element, index) => {
-    //     if (index >= sorted.length) return element;
-    //     return sorted[index];
-    //   })
-    //   ;
-    
     const len = sorted.length > include ? include : sorted.length;
     const newTopBids = sorted.slice(0, len);
 

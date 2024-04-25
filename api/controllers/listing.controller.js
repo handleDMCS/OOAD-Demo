@@ -15,7 +15,6 @@ export const startListing = async (req, res, next) => {
         await Item.findByIdAndUpdate(
           item._id,
           { status: "Listed" },
-          { new: true }
         );
         await item.save();
         // io.getListingIO()

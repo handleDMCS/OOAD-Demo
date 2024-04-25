@@ -37,8 +37,6 @@ export const getIO = () => {
     return socketio;
 }
 
-
-
 // export const initListing = (httpServer, path = 'socket/listingPage') => {
 //     listingIo = new Server(httpServer, {cors: {
 //         origin: process.env.CLIENT_BASE_URL,

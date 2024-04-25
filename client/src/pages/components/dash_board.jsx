@@ -16,7 +16,6 @@ function Auction_Panel() {
   }
   
   // start auction on time
-  // get auctions list
   useEffect(() => {
     const startAuction = async () => {
       try {
@@ -32,6 +31,11 @@ function Auction_Panel() {
         console.log(error);
       }
     }
+    startAuction();
+  }, [])
+  
+  // get auctions list
+  useEffect(() => {
     const fetchAuctions = async () => {
       try {
         const res = await fetch('/api/listing/listings', {
@@ -42,14 +46,13 @@ function Auction_Panel() {
         })
         const data = await res.json();
         setListings(data);
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         console.log(error);
       }
     }
     
     const interval = setInterval(() => {
-      startAuction();
       fetchAuctions();
     } , 1000);
 
