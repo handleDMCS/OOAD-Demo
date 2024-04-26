@@ -155,9 +155,10 @@ function Edit_Item_Info() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(currentItem);
-  console.log(item);
+  console.log("currentItem:", currentItem);
+  console.log("item:", item);
 
+  if (currentItem != null) 
   useEffect(() => {
     setItem({
       productName: currentItem.productName,
@@ -293,18 +294,21 @@ function Edit_Item_Info() {
 }
 
 function Delete_item() {
-  const itemID = useSelector((state) => state.item.item._id);
-  const item = useSelector((state) => state.item.item);
+  const currentItem = useSelector((state) => state.item.item);
+  const [item, setItem] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setItem(currentItem);
+  }, [item]);
+
   const handleDelete = async (e) => {
     e.preventDefault();
 
-    dispatch(deleteItemStart());
     try {
-      const res = await fetch(`/api/item/delete/${itemID}`, {
+      const res = await fetch(`/api/item/delete/${item._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -383,7 +387,7 @@ export default function item_panel() {
         }
         dispatch(fetchItemsSuccess(data));
         setListings(data);
-        console.log(data);
+        console.log(listings);
       } catch (error) {
         console.log(error);
       }
@@ -420,6 +424,7 @@ export default function item_panel() {
                   handleDelete={(e) => {
                     e.stopPropagation();
                     document.getElementById("delete-item").showModal();
+                    dispatch(deleteItemStart(listing));
                   }}
                   name={listing.productName}
                   owner={listing.owner.firstname + " " + listing.owner.lastname}

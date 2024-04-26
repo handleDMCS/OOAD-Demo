@@ -172,7 +172,7 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
 
   return (
     <div className="bg-white rounded-box flex flex-col p-2 gap-2 shadow-md">
-      {topBids && topBids.map((user, index) => (
+      {topBids ? topBids.map((user, index) => (
         <div
           key={index}
           className="flex flex-row gap-2"
@@ -211,7 +211,9 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
             )}
           </div>
         </div>
-      ))}
+      )) : <div className="flex flex-row">
+          <span className="text-lg">No bids yet</span>
+        </div>}
     </div>
   );
 }
@@ -257,7 +259,7 @@ function NewBid({
   const handleInputChange = (event) => {
     const value = event.target.value;
 
-    console.log(value);
+    // console.log(value);
     if (!value.startsWith("0")) {
       setCurrentBid(value);
     }

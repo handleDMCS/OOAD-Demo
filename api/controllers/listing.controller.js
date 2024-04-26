@@ -9,7 +9,7 @@ export const startListing = async (req, res, next) => {
   try {
     const items = await Item.find({ status: "Unlisted" });
     if (!items) 
-      return;
+      return null;
     for (let item of items) {
       if(item.startTime <= Date.now()) {
         await Item.findByIdAndUpdate(

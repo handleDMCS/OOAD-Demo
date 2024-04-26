@@ -12,15 +12,10 @@ export default function product_card({
   duration,
   image,
 }) {
-  const handleDeleteItem = (e) => {
-    e.stopPropagation()
-    handleDelete()
-  }
-
   return (
     <div className="p-3 card-spacing">
       <div className="card card-compact bg-base-100 shadow-xl relative" onClick={handleClick}>
-        {canDelete && <button className="bg-base-100 btn btn-sm btn-circle absolute right-2 top-2" onClick={(e) => {handleDeleteItem(e)}}>
+        {canDelete && <button className="bg-base-100 btn btn-sm btn-circle absolute right-2 top-2" onClick={handleDelete}>
           <X></X>
         </button>}
         <figure>

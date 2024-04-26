@@ -36,18 +36,20 @@ export const itemSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
-        deleteItemStart: (state) => {
+        deleteItemStart: (state, action) => {
             state.loading = true;
-            state.item = null;
+            state.item = action.payload;
         },
         deleteItemSuccess: (state, action) => {
             state.items = state.items.filter(item => item._id !== action.payload);
             state.error = null;
             state.loading = false;
+            state.item = null;
         },
         deleteItemFailure: (state, action) => {
             state.error = action.payload;
             state.loading = false;
+            state.item = null;
         },
         updateItemStart: (state, action) => {
             state.loading = true;

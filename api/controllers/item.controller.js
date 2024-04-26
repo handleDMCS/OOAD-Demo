@@ -59,13 +59,14 @@ export const getVerifiedItems = async (req, res, next) => {
 }
 
 export const deleteItem = async (req, res, next) => {
-    const { id } = req.params;
+    const id = req.params.id;
+    console.log("id", id);
     try {
         const item = await Item.findById(id);
         if (!item) {
             return next(errorHandler(400, "Item not found"));
         }
-        if (item.owner.toString() !== req.user._id.toString()) {
+        if (item.owner.toString() !== req.user.id.toString()) {
             return next(errorHandler(403, "Unauthorized"));
         }
         await item.deleteOne({ _id: id });
