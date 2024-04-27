@@ -21,7 +21,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<PrivateRoute/>}>
-          <Route path='/profile' element={<Profile />}></Route>
+          <Route path='/profile/:id' element={<Profile />}></Route>
           <Route path='/items/my' element={<My_items />}></Route>
         </Route>
         <Route element={<PublicRoute />}>

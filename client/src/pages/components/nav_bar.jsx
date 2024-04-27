@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import Filter from './filter'
 import { useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 export default function nav_bar({showFilter=true, currentPage='Home'}) {
   const refMap = {
@@ -10,6 +11,10 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
     'My-Auctions': useRef(null),
     'My-Items': useRef(null)
   }
+
+  const currentUser = useSelector(state => state.user.user);
+  console.log(currentUser)
+  const profileLink = `/profile/${currentUser._id}`
 
   useEffect(() => {
     const element = refMap[currentPage].current;
@@ -21,7 +26,7 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
   return (
     <div className="flex flex-col justify-between w-72 h-screen p-2">
       <ul className="menu bg-base-200 rounded-box">
-        <Link to='/profile'>
+        <Link to={profileLink}>
           <li id='Home' ref={refMap['Home']} className='mb-0.5'>
             <h2 className='Menu-title mb-0.5'>Home</h2>
           </li>
@@ -29,14 +34,6 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
         <Link to='/'>
           <li id='All-Auctions' ref={refMap['All-Auctions']} className='mb-0.5'>
             <h2 className='Menu-title mb-0.5'>Auctions</h2>
-            {/* <ul>
-              <Link to='/'>
-                <li id='All-Auctions' ref={refMap['All-Auctions']} className='mb-0.5'><a>All Auctions</a></li>
-              </Link>
-              <Link to='auctions/my'>
-                <li id='My-Auctions' ref={refMap['My-Auctions']} className='mb-0.5'><a>My Auctions</a></li>
-              </Link>
-            </ul> */}
           </li>
         </Link>
         

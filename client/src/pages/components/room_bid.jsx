@@ -30,7 +30,7 @@ function SubmitBid(
       console.log(data);
 
       // change to use socket.io later
-      navigate(0);
+      // navigate(0);
     } catch (error) {
       console.log(error);
     }
@@ -158,7 +158,7 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
         return {
           ...bid,
           user: user.firstname + " " + user.lastname,
-          profileLink: `/user/${bid.user}`,
+          profileLink: `/profile/${bid.user}`,
         };
       });
 
@@ -304,7 +304,7 @@ function NewBid({
               min={startingPrice}
               step={priceStep}
               type="number"
-              value={currentBid}
+              value={currentBid ? currentBid : ""}
               className="grow"
               placeholder="Bid Amount"
               onChange={handleInputChange}
