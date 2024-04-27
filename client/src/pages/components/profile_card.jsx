@@ -76,7 +76,7 @@ function Edit({userID}) {
 }
 
 
-export default function profile_card({view='visitor', admin=false, userID=-1}) {
+export default function profile_card({view='visitor', admin=true, userID=-1}) {
     const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -108,7 +108,7 @@ export default function profile_card({view='visitor', admin=false, userID=-1}) {
         <div className="flex basis-2/6 bg-neutral flex-col">
             <div className="flex justify-center items-center basis-5/12 p-2">
                 <div className="flex flex-col items-center justify-center gap-2">
-                    <div class="w-40 h-40 flex items-center justify-center bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-40 h-40 flex items-center justify-center bg-gray-200 rounded-full overflow-hidden">
                         <img src='https://i.kym-cdn.com/photos/images/original/002/382/633/9c9.jpg' alt="burger"/>
                     </div>
                     <span className='text-neutral-content text-lg font-semibold'>Gigachad</span>

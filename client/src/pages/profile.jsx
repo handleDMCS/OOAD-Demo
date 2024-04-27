@@ -1,51 +1,15 @@
 import React, {useState} from 'react'
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import Navbar from './components/nav_bar';
-
-import {
-  logoutStart,
-  logoutSuccess,
-  logoutFailure
-} from '../redux/slice/userSlice';
+import Profile_card from './components/profile_card';
 
 export default function Profile () {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const handleLogout = async (e) => {
-    e.preventDefault();
-
-    try {
-      dispatch(logoutStart());
-      const res = await fetch ('/api/auth/logout', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await res.json();
-      if (data.success == false) {
-        dispatch(logoutFailure(data.msg));
-      } 
-      dispatch(logoutSuccess(data));
-      navigate('/login');
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   return (
     <div className="flex flex-grow flex-row bg-base-200">
       
-      <Navbar currentPage='Home'></Navbar>   
-      
-      <span>
-        Profile
-
-        <button onClick={handleLogout} type="submit" className="btn btn-primary">Logout</button>
-      </span>
+      <Navbar currentPage='Home' showFilter={false}></Navbar>
+      <div className='flex flex-grow pt-2 pr-2 pb-2'>
+        <Profile_card view='user' admin></Profile_card>
+      </div>
     </div>
   )
 }
