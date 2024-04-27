@@ -34,6 +34,31 @@ function Contact_card({ icon, label, value, link = false }) {
 }
 
 function Edit({ userID }) {
+	const user = useSelector((state) => state.user.user);
+	const [formUser, setFormUser] = useState({});
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormUser({ ...formUser, [name]: value });
+	};
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		try {
+			const res = await fetch(`/api/user/update/${userID}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formUser)
+			})
+			const data = await res.json();
+			console.log(data);
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
   return (
     <dialog id="edit-profile" className="modal">
       <div className="modal-box w-1/2 max-w-5xl">
@@ -44,21 +69,25 @@ function Edit({ userID }) {
           </label>
 
           <label className="form-input">
-            Name
+            First Name
             <input
               type="text"
               className="input-lg"
               placeholder="Your Public Name"
+							defaultValue={user.firstname}
+							onChange={handleChange}
               required
             />
           </label>
 
-          <label className="form-input">
-            Phone
+					<label className="form-input">
+            Last Name
             <input
               type="text"
               className="input-lg"
-              placeholder="Your Phone Number"
+              placeholder="Your Public Name"
+							defaultValue={user.lastname}
+							onChange={handleChange}
               required
             />
           </label>
@@ -69,16 +98,9 @@ function Edit({ userID }) {
               type="text"
               className="input-lg"
               placeholder="Your Gmail"
+							defaultValue={user.email}
+							onChange={handleChange}
               required
-            />
-          </label>
-
-          <label className="form-input">
-            Facebook
-            <input
-              type="text"
-              className="input-lg"
-              placeholder="Your Facebook (Optional)"
             />
           </label>
 
@@ -86,7 +108,8 @@ function Edit({ userID }) {
             className="textarea textarea-bordered min-h-48 input-lg"
             placeholder="Description"
           ></textarea>
-          <button type="submit" className="btn btn-primary w-full">
+
+          <button onSubmit={handleSubmit} type="submit" className="btn btn-primary w-full">
             Save
           </button>
         </form>
@@ -102,13 +125,12 @@ function Edit({ userID }) {
 }
 
 export default function profile_card({
-  view = "visitor",
-  admin = true,
+  view,
+  admin,
   userID,
 }) {
 	const [user, setUser] = useState({});
 	const params = useParams();
-	console.log(userID)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -124,14 +146,14 @@ export default function profile_card({
 					}
 				})
 				const data = await res.json();
-				console.log(data);
+				// console.log(data);
 				setUser(data);
 			} catch (error) {
 				console.log(error);
 			}
 		}
 		fetchUser(params.id);
-	}, [userID])
+	}, [])
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -178,7 +200,7 @@ export default function profile_card({
             <Contact_card
               icon={<Phone></Phone>}
               label={"Phone"}
-              value="123456789"
+              value="0123456789"
             ></Contact_card>
             <Contact_card
               icon={<Mail></Mail>}

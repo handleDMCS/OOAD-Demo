@@ -13,7 +13,7 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
   }
 
   const currentUser = useSelector(state => state.user.user);
-  console.log(currentUser)
+  // console.log(currentUser)
   const profileLink = `/profile/${currentUser._id}`
 
   useEffect(() => {
