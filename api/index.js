@@ -32,15 +32,11 @@ app.listen(3000, () => {
 
 // Socket.io
 const server = createServer(app);
-const io = new Server(server);
-const socket = io;
-
-io.on('connection', (socket) => {
-    console.log('a user connected');
-
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
+const io = new Server(server, {
+    cors: {
+        origin: 'localhost:3000',
+        methods: ['GET', 'POST'],
+    }
 });
 
 // Routes

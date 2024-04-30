@@ -4,16 +4,18 @@ import Product_card from './product_card'
 import Item_panel from './item_panel'
 
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { 
+  joinListingStart, joinListingSuccess, 
+  fetchListingsStart, fetchListingsSuccess, fetchListingsFailure
+} from '../../redux/slice/listingSlice'
 
 function Auction_Panel() {
-  const [listings, setListings] = useState([]);
+  const listings = useSelector(state => state.listing.listings);
+  const currentUser = useSelector(state => state.user.user);
 
   const navigate = useNavigate();
-
-  // navigate to an auction room
-  const handleAuctionClick = (id) => {
-    navigate(`/auction/${id}`);
-  }
+  const dispatch = useDispatch();
   
   // start auction on time
   useEffect(() => {
@@ -36,6 +38,7 @@ function Auction_Panel() {
   
   // get auctions list
   useEffect(() => {
+    dispatch(fetchListingsStart());
     const fetchAuctions = async () => {
       try {
         const res = await fetch('/api/listing/listings', {
@@ -45,10 +48,10 @@ function Auction_Panel() {
           }
         })
         const data = await res.json();
-        setListings(data);
+        dispatch(fetchListingsSuccess(data));
         // console.log(data);
       } catch (error) {
-        console.log(error);
+        dispatch(fetchListingsFailure(error));
       }
     }
     
@@ -70,7 +73,15 @@ function Auction_Panel() {
             { listings && listings.map(listing => (
                 <Product_card 
                   key={listing._id}
-                  handleClick={() => {handleAuctionClick(listing._id);}} 
+                  handleClick={() => {
+                    dispatch(joinListingStart());
+                    if (currentUser) {
+                      dispatch(joinListingSuccess(listing));
+                      navigate(`/auction/${listing._id}`);
+                    } else {
+                      navigate('/login');
+                    }
+                  }} 
                   canDelete={false}
                   handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
                   name={listing.productName}

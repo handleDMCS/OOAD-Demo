@@ -11,8 +11,8 @@ import { verifyToken } from '../utils/auth.js';
 const router = express.Router();
 
 router.delete('/deleteAccount', verifyToken, deleteAccount);
-router.post('/updateAccount/:id', verifyToken, updateAccount);
-router.get('/:id', verifyToken, getUserById);
+router.post('/update/:id', verifyToken, updateAccount);
+router.get('/:id', getUserById);
 router.post('/reportUser', verifyToken, reportUser);
 router.get('/getReportedUsers', verifyToken, getReportedUsers);
 

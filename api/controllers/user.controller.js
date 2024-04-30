@@ -44,6 +44,7 @@ export const updateAccount = async (req, res, next) => {
 
 export const getUserById = async (req, res, next) => {
     const id = req.params.id;
+    // console.log(id);
     try {
         const user = await User.findById(id);
         if (!user) {

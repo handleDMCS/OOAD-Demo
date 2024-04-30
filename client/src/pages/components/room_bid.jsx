@@ -54,7 +54,7 @@ function SubmitBid(
   );
 }
 
-function CountDown({ remTime, setRemTime, initTime }) {
+function CountDown({ remTime, setRemTime, duration }) {
   const toSec = {
     day: 86400,
     hour: 3600,
@@ -83,8 +83,11 @@ function CountDown({ remTime, setRemTime, initTime }) {
     const tday = Math.floor(remTime / toSec.day);
     const thour = Math.floor((remTime % toSec.day) / toSec.hour);
     const tmin = Math.floor((remTime % toSec.hour) / toSec.min);
-    const tsec = remTime % toSec.min;
-    const tpercent = ((initTime - remTime) * 100) / initTime;
+    const tsec = Math.floor(remTime % toSec.min);
+    const tpercent = ((duration - remTime) * 100) / duration;
+
+    // console.log(tday, thour, tmin, tsec, tpercent);
+    // console.log("day", tday, "hour", thour, "min", tmin, "sec", tsec, "percent", tpercent);
 
     setDay(tday);
     setHour(thour);
@@ -343,15 +346,21 @@ function NewBid({
 export default function room_bid({
   auctionID,
   budget,
+  duration,
   startingPrice,
   priceStep,
-  initTime,
+  startingTime,
 }) {
   const inputRef = useRef(null);
-  const [remTime, setRemTime] = useState(initTime); // number of seconds remaining
+  const [remTime, setRemTime] = useState(
+    Math.floor(duration - (Date.now() - new Date(startingTime).getTime()) / 1000)
+  ); // number of seconds remaining
   const [currentBid, setCurrentBid] = useState("");
   const [Bids, setBids] = useState([]);
   // const params = useParams();
+
+  console.log('remTime', remTime)
+  console.log('duration', duration)
 
   // fetch bid
   useEffect(() => {
@@ -378,7 +387,7 @@ export default function room_bid({
       <CountDown
         remTime={remTime}
         setRemTime={setRemTime}
-        initTime={initTime}
+        duration={duration}
       ></CountDown>
       <LeaderBoard
         inputRef={inputRef}
