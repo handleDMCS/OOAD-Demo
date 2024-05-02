@@ -39,11 +39,12 @@ function Slide({pics}) {
 function Description(props) {
   const name = `Name: ${props.name}\n`
   const host = `Host: ${props.host}\n`
-  const time = `Active during: ${props.start} - ${props.end}\n`
+  const active = `Active during:\n`
+  const time = `${props.start} - ${props.end}\n`
   const startingPrice = `Starting price: ${props.startingPrice}\n`
   const priceStep = `Price step: ${props.priceStep}\n`
   const info = `Detailed description: ${props.info}\n`
-  const content = name+host+time+startingPrice+priceStep+info
+  const content = name+host+active+time+startingPrice+priceStep+info
 
   return (
     <div className="flex flex-col flex-grow overflow-hidden p-2 pt-0">

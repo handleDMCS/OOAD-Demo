@@ -1,65 +1,58 @@
+import express from 'express';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-const socketio = new Server({
+const app = express();
+const server = createServer(app);
+
+const io = new Server(server, {
     cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
+        origin: 'localhost:5173',
+        methods: ['*'],
+        allowedHeaders: ['*'],
     }
 });
 
-export const init = (server) => {
-    const io = new Server(server, {
-        cors: {
-            origin: '*',
-            methods: ['GET', 'POST'],
-            allowedHeaders: ['*'],
-        },
-    });
-    return io;
-}
-
-export const initListing = (server, path = '/socket/listingPage') => {
-    const listingIo = new Server(server, {
-        cors: {
-            origin: '*',
-            methods: ['GET', 'POST'],
-            allowedHeaders: ['*'],
-        },
-        path: path,
-    });
-    return listingIo;
-}
-
-export const getIO = () => {
-    if (!socketio) {
-        throw new Error('Socket.io not initialized');
+const listingIo = new Server(server, {
+    path: '/socket/listing',
+    cors: {
+        origin: 'localhost:5173',
+        methods: ['*'],
+        allowedHeaders: ['*'],
     }
-    return socketio;
-}
+});
 
-// export const initListing = (httpServer, path = 'socket/listingPage') => {
-//     listingIo = new Server(httpServer, {cors: {
-//         origin: process.env.CLIENT_BASE_URL,
-//         methods: ['*'],
-//         allowedHeaders: ['*'],
-//       },
-//       path: path,
-//     });
-//     return listingIo;
-// }
+io.on('connection', (socket) => {
+    console.log('User connected');
+    socket.on('disconnect', (reason) => {
+        console.log('User disconnected');
+    });
+});
 
-// export const getIO = () => {
-//     if (!io) {
-//         throw new Error('Socket.io not initialized');
-//     }
-//     return io;
-// }
+listingIo.on('connection', (socket) => {
+    console.log('User connecxted to listing');
 
-// exports.getListingIO = () => {
-//     if (!listingIo) {
-//         throw new Error('Listing socket.io not initialized');
-//     }
-//     return listingIo;
-// }
+    // join listing
+    socket.on('join', ({ listing }) => {
+        socket.join(listing.toString());
+        console.log('User joined listing');
+    });
+    socket.on('leave', ({ listing }) => {
+        socket.leave(listing.toString());
+        console.log('User left listing');   
+    });
+    
+    // disconnect from listing
+    socket.on('disconnect', (reason) => {
+        console.log('User disconnected from listing');
+    });
+})
 
-export default socketio;
+server.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
+
+// Path: api/socket.js
+// Compare this snippet from api/routes/listing.route.js:
+
+export { io, listingIo, app, server }

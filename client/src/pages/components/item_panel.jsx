@@ -155,21 +155,13 @@ function Edit_Item_Info() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  if (currentItem != null)
+    useEffect(() => {
+      setItem(currentItem);
+    }, []);
+
   console.log("currentItem:", currentItem);
   console.log("item:", item);
-
-  if (currentItem != null) 
-  useEffect(() => {
-    setItem({
-      productName: currentItem.productName,
-      initialPrice: currentItem.initialPrice,
-      jump: currentItem.jump,
-      description: currentItem.description,
-      duration: currentItem.duration,
-      image: currentItem.image,
-    });
-    dispatch(updateItemStart(currentItem));
-  }, [currentItem]);
 
   const handleChangeEditItem = (e) => {
     setItem({
@@ -177,11 +169,9 @@ function Edit_Item_Info() {
       [e.target.id]: e.target.value,
     });
   };
-  
 
   const handleEditItem = async (e) => {
     e.preventDefault();
-
     const id = currentItem._id;
     console.log(item);
     try {
@@ -189,7 +179,7 @@ function Edit_Item_Info() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        },
+        },  
         body: JSON.stringify(item),
       });
       const data = await res.json();
@@ -272,7 +262,7 @@ function Edit_Item_Info() {
               type="number"
               className="input-lg"
               placeholder="Duration in seconds"
-              value={item.duration}
+              defaultValue={item.duration}
               required
             />
           </label>
@@ -295,25 +285,23 @@ function Edit_Item_Info() {
 
 function Delete_item() {
   const currentItem = useSelector((state) => state.item.item);
-  const [item, setItem] = useState({});
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    setItem(currentItem);
-  }, [item]);
+  // useEffect(() => {
+  //   setItem(currentItem);
+  // }, [item]);
 
   const handleDelete = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(`/api/item/delete/${item._id}`, {
+      const res = await fetch(`/api/item/delete/${currentItem._id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(item),
       });
       const data = await res.json();
       console.log(data);
@@ -417,8 +405,8 @@ export default function item_panel() {
                   key={listing._id}
                   handleClick={(e) => {
                     e.stopPropagation();
-                    dispatch(updateItemStart(listing));
                     document.getElementById("item-info").showModal();
+                    dispatch(updateItemStart(listing));
                   }}
                   canDelete
                   handleDelete={(e) => {

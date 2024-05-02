@@ -132,6 +132,8 @@ export default function profile_card({
 	const [user, setUser] = useState({});
 	const params = useParams();
 
+  console.log(params.id);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -176,7 +178,7 @@ export default function profile_card({
     } catch (error) {
       console.log(error);
     }
-  };
+  };;
   return (
     <div className="flex flex-row rounded-box bg-base-200 flex-grow overflow-hidden">
       <Edit userID={userID}></Edit>

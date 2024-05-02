@@ -59,6 +59,7 @@ export const itemSlice = createSlice({
             state.items = state.items.map(item => item._id === action.payload._id ? action.payload : item);
             state.error = null;
             state.loading = false;
+            state.item = null;
         },
         updateItemFailure: (state, action) => {
             state.error = action.payload;

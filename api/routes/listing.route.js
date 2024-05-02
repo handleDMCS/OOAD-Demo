@@ -12,7 +12,7 @@ import { verifyToken } from '../utils/auth.js';
 
 const router = express.Router();
 
-router.get('/start', verifyToken, startListing);
+router.get('/list', startListing);
 router.get('/listings', verifyToken, getListings);
 router.get('/listings/my', verifyToken, getListingByUser);
 router.get('/:id', verifyToken, getListingById);

@@ -1,7 +1,8 @@
 import Item from "../models/item.model.js";
 import User from "../models/user.model.js";
-import io from "../socket.js";
 import { errorHandler } from "../utils/error.js";
+
+import { io, listingIo } from "../socket.js";
 
 // @route POST /api/listing/start
 // @desc Start a listing
@@ -12,14 +13,32 @@ export const startListing = async (req, res, next) => {
       return null;
     for (let item of items) {
       if(item.startTime <= Date.now()) {
+        // start listing
         await Item.findByIdAndUpdate(
           item._id,
           { status: "Listed" },
         );
         await item.save();
-        // io.getListingIO()
-        //   .to(item._id.toString())
-        //   .emit("listing", { action: "started", item: item });
+        listingIo
+          .to(item._id.toString())
+          .emit("listing", { action: "started", item: item });
+      } else {
+        // end listing
+        const curTime = (Date.now() - item.startTime) / 1000;
+        if (curTime >= item.duration) {
+          await
+            Item.findByIdAndUpdate(
+              item._id,
+              { 
+                status: "Ended",
+                winner: item.currentBidder
+              },
+            );
+          await item.save();
+          listingIo
+            .to(item._id.toString())
+            .emit("listing", { action: "ended", item: item });
+        }
       }
     }
   } catch (error) {
@@ -88,7 +107,7 @@ export const userBid = async (req, res, next) => {
     console.log("item", item);
 		
 		if (!item) 
-			return next(errorHandler(400, "Item not found"));
+			return next(errorHandler(404, "Item not found"));
     if (item.owner._id.toString() === user.id.toString())
       return next(errorHandler(403, "Owner cannot bid on own item"));
     if (item.status !== "Listed")
@@ -99,7 +118,8 @@ export const userBid = async (req, res, next) => {
       return next(errorHandler(407, "Bid must be a multiple of price step"));
     if (user.balance * 5 - bid < 0)
       return next(errorHandler(408, "Insufficient balance"));
-    if (user.id.toString() === item.currentBidder.toString())
+    if (item.currentBidder)
+      if(user.id.toString() === item.currentBidder._id.toString())
       return next(errorHandler(409, "You are already the highest bidder"));
 
     item.currentPrice = bid;
@@ -109,9 +129,14 @@ export const userBid = async (req, res, next) => {
       amount: bid 
     });
     await item.save();
-    // io.getListingIO()
-    //   .to(item._id.toString())
-    //   .emit("listing", { action: "bid", item: item });
+    io.getListingIO()
+      .to(item._id.toString())
+      .emit("listing", { 
+        action: "bid", 
+        item: item,
+        user: user,
+        bid: bid
+      });
     res.status(200).json("Bid placed successfully");
   } catch (error) {
     next(errorHandler(400, error.message));
@@ -129,9 +154,9 @@ export const joinListing = async (req, res, next) => {
       return next(errorHandler(400, "Item is not active"));
     item.currentBidder = req.user._id;
     await item.save();
-    io.getListingIO()
-      .to(item._id.toString())
-      .emit("listing", { action: "bid", item: item });
+    // io.getListingIO()
+    //   .to(item._id.toString())
+    //   .emit("listing", { action: "bid", item: item });
     res.status(200).json("Joined listing successfully");
   } catch (error) {
     next(error);
