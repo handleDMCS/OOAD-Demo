@@ -13,26 +13,31 @@ export default function auction_room() {
   const user = useSelector(state => state.user.user);
   const params = useParams();
   console.log(user);
-
+  
   // socket params
 
-  // // For listing room
-  // useEffect(() => {
-  //   const socket = openSocket('localhost:3000', {
-  //     path: '/socket/listing'
-  //   });
+  // For listing room
+  useEffect(() => {
+    const socket = openSocket('localhost:5173', {
+      path: '/socket/listing'
+    });
 
-  //   socket.emit('join', { room: params.id });
-  //   socket.on('start', (data) => {
-  //     console.log(data);
-  //   });
-  // }, [params.id])
+    socket.emit('join', { room: params.id });
+    socket.on('join', (data) => {
+      console.log(data);
+    });
+
+    return () => {
+      socket.emit('leave', { room: params.id });
+      socket.disconnect();
+    }
+  }, [params.id])
   
   const host = item.owner.firstname + ' ' + item.owner.lastname;
 
-  let start = new Date(item.createdAt);
+  let start = new Date(item.startTime);
   start = start.toLocaleString();
-  let end = new Date(item.createdAt);
+  let end = new Date(item.startTime);
   end.setSeconds(end.getSeconds() + item.duration);
   end = end.toLocaleString();
 

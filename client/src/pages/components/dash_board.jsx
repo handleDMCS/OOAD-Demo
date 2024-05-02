@@ -21,7 +21,7 @@ function Auction_Panel() {
   useEffect(() => {
     const startAuction = async () => {
       try {
-        const res = await fetch('/api/listing/start', {
+        const res = await fetch('/api/listing/list', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

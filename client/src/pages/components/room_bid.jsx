@@ -15,7 +15,6 @@ function SubmitBid(
 ) {
   const navigate = useNavigate();
   const handleSubmit = async () => {
-    console.log(currentBid);
     try {
       const res = await fetch(`/api/listing/bid/${auctionID}`, {
         method: "PUT",
@@ -161,7 +160,8 @@ function LeaderBoard({ Bids, include, setCurrentBid, inputRef }) {
         return {
           ...bid,
           user: user.firstname + " " + user.lastname,
-          profileLink: `/user/${bid.user}`,
+          profileLink: `/profile
+          /${bid.user}`,
         };
       });
 
@@ -359,8 +359,8 @@ export default function room_bid({
   const [Bids, setBids] = useState([]);
   // const params = useParams();
 
-  console.log('remTime', remTime)
-  console.log('duration', duration)
+  // console.log('remTime', remTime)
+  // console.log('duration', duration)
 
   // fetch bid
   useEffect(() => {

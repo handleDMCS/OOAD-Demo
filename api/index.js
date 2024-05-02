@@ -9,12 +9,9 @@ import listingRoutes from './routes/listing.route.js';
 import roomRoutes from './routes/room.route.js';
 import cookieParser from 'cookie-parser';
 
-import { createServer } from 'node:http';
-import { Server } from 'socket.io';
+import { app, server } from './socket.js';
 
 // import socketio from './socket.js';
-
-const app = express();
 
 dotenv.config();
 
@@ -26,18 +23,8 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
     console.log('DB connected');
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
-
 // Socket.io
-const server = createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: 'localhost:3000',
-        methods: ['GET', 'POST'],
-    }
-});
+
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -45,4 +32,3 @@ app.use('/api/user', userRoutes);
 app.use('/api/item', itemRoutes);   
 app.use('/api/listing', listingRoutes);
 app.use('/api/room', roomRoutes);
-
