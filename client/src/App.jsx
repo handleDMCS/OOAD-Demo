@@ -8,6 +8,9 @@ import Login from './pages/login'
 import Auction_room from './pages/auction_room'
 import My_items from './pages/my_items'
 import Profile from './pages/profile'
+import Admin from './pages/admin'
+import Activity_log from './pages/activity_log'
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -18,7 +21,9 @@ function App() {
     // <Login></Login>
     // <Register></Register>
     // <My_items></My_items>
-    <Profile></Profile>
+    // <Profile></Profile>
+    <Admin></Admin>
+    // <Activity_log></Activity_log>
   )
 }
 

@@ -8,6 +8,7 @@ import { Minus } from 'react-feather'
 import { CreditCard } from 'react-feather'
 import { ShoppingCart } from 'react-feather'
 import { useRef } from 'react'
+import Alert from './alert'
 
 function SubmitBid() {
   return (
@@ -37,18 +38,19 @@ function CountDown({remTime, setRemTime, initTime}) {
   const [min, setMin] = useState(0)
   const [sec, setSec] = useState(0)
   const [percent, setPercent] = useState(0)
+  const [showAlert, setShowAlert] = useState(false)
   
   useEffect(() => {
     const timer = setInterval(() => {
-      setRemTime((prev) => {return prev-1}); // Using a function to update remTime
+      setRemTime((prev) => {return Math.max(prev-1, 0)}); // Using a function to update remTime
     }, 1000);
 
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
-    if(remTime < 0) {
-      return;
+    if(remTime == 0) {
+      setShowAlert(true)
     }
     const tday = Math.floor(remTime / toSec.day)
     const thour = Math.floor((remTime % toSec.day) / toSec.hour)
@@ -64,6 +66,10 @@ function CountDown({remTime, setRemTime, initTime}) {
 
   return (
     <div className="flex flex-col items-center gap-2">
+      <Alert mode='end' showAlert={showAlert}></Alert>
+      {/* <Alert mode='begin' showAlert={showAlert} link='https://www.example.com'></Alert> */}
+      {/* <Alert mode='topbid' showAlert={showAlert} link='https://www.example.com'></Alert> */}
+      {/* <Alert mode='approved' link='https://www.example.com' showAlert={showAlert}></Alert> */}
       <progress className="progress w-96" value={percent} max="100"></progress>
       <div className="grid grid-flow-col gap-2 text-center auto-cols-max">
         <div className="timer">

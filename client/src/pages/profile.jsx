@@ -7,7 +7,7 @@ export default function profile() {
     <div className='w-screen h-screen flex flex-row'>
       <Navbar currentPage='Home' showFilter={false}></Navbar>
       <div className='flex flex-grow pt-2 pr-2 pb-2'>
-        <Profile_card view='user' admin></Profile_card>
+        <Profile_card admin={true} view='user'></Profile_card>
       </div>
     </div>
   )

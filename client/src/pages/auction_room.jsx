@@ -9,7 +9,7 @@ export default function auction_room() {
           <Room_info></Room_info>
         </div>
         <div className="flex basis-1/2 bg-base-200 rounded-md">
-          <Room_bid initTime={100} budget={100000} startingPrice={10000} priceStep={5000}></Room_bid>
+          <Room_bid initTime={10} budget={100000} startingPrice={10000} priceStep={5000}></Room_bid>
         </div>
     </div>
   )
