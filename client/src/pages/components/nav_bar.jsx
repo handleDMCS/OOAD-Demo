@@ -24,7 +24,7 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
   }, [])
 
   return (
-    <div className="flex flex-col justify-between w-72 h-screen p-2">
+    <div className="flex flex-col justify-between w-64 h-screen p-2 flex-shrink-0">
       <ul className="menu bg-base-200 rounded-box">
         <Link to={profileLink}>
           <li id='Home' ref={refMap['Home']} className='mb-0.5'>

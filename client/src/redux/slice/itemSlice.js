@@ -2,9 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     items: [],
+    pendings: [],
+    verified: [],
     error: null,
     loading: false,
-    item: null,   
+    item: null,
 };
 
 export const itemSlice = createSlice({
@@ -31,6 +33,7 @@ export const itemSlice = createSlice({
             state.items = action.payload;
             state.error = null;
             state.loading = false;
+            state.totalPage = Math.ceil(action.payload.length / 5);
         },
         fetchItemsFailure: (state, action) => {
             state.error = action.payload;
@@ -65,6 +68,44 @@ export const itemSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
         },
+        fetchPendingStart: (state) => {
+            state.loading = true;
+        },
+        fetchPendingSuccess: (state, action) => {
+            state.pendings = action.payload;
+            state.error = null;
+            state.loading = false;
+        },
+        fetchPendingFailure: (state, action) => {  
+            state.error = action.payload;
+            state.loading = false;
+        },
+        fetchVerifiedStart: (state) => {
+            state.loading = true;
+        },
+        fetchVerifiedSuccess: (state, action) => {
+            state.verified = action.payload;
+            state.error = null;
+            state.loading = false;
+        },
+        fetchVerifiedFailure: (state, action) => {  
+            state.error = action.payload;
+            state.loading = false;
+        },
+        verifyItemStart: (state, action) => {
+            state.loading = true;
+            state.item = action.payload;
+        },
+        verifyItemSuccess: (state, action) => {
+            state.error = null;
+            state.loading = false;
+            state.item = null;
+        },
+        verifyItemFailure: (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+            state.item = null;
+        }
     },
 });
 
@@ -73,6 +114,9 @@ export const {
     fetchItemsStart, fetchItemsSuccess, fetchItemsFailure,
     deleteItemStart, deleteItemSuccess, deleteItemFailure,
     updateItemStart, updateItemSuccess, updateItemFailure,
+    fetchPendingStart, fetchPendingSuccess, fetchPendingFailure,
+    fetchVerifiedStart, fetchVerifiedSuccess, fetchVerifiedFailure,
+    verifyItemStart, verifyItemSuccess, verifyItemFailure,
 } = itemSlice.actions;
 
 export default itemSlice.reducer;

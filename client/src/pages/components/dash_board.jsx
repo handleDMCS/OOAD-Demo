@@ -13,6 +13,8 @@ import {
 function Auction_Panel() {
   const listings = useSelector(state => state.listing.listings);
   const currentUser = useSelector(state => state.user.user);
+  const currentPage = useState(1);
+  const itemPerPage = useState(4);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -41,7 +43,7 @@ function Auction_Panel() {
     dispatch(fetchListingsStart());
     const fetchAuctions = async () => {
       try {
-        const res = await fetch('/api/listing/listings', {
+        const res = await fetch('/api/listing/active', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -66,11 +68,12 @@ function Auction_Panel() {
 
   return (
     <div className="flex flex-grow flex-col bg-base-200">
-      <Pagination_bar></Pagination_bar>        
+      <Pagination_bar></Pagination_bar> 
+  
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
-            { listings && listings.map(listing => (
+            { listings && listings.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage).map(listing => (
                 <Product_card 
                   key={listing._id}
                   handleClick={() => {
@@ -99,15 +102,6 @@ function Auction_Panel() {
     </div>
   )
 }
-
-function Item_Panel() {
-  return (
-    <div className="flex flex-grow flex-col bg-base-200">
-      <Item_panel></Item_panel>
-    </div>
-  )
-}
-
 
 export default function dash_board() {
   return (

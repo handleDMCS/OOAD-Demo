@@ -1,6 +1,14 @@
 import Item from "../models/item.model.js";
 import { errorHandler } from "../utils/error.js";
-import { ObjectId } from "mongodb";
+
+export const getAllItems = async (req, res, next) => {
+    try {
+        const items = await Item.find({}, {isVerified: 1, status: 1});
+        res.status(200).json(items);
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const addItem = async (req, res, next) => {
     const { name, description, initialprice, jump, duration, image, startTime } = req.body;
@@ -30,6 +38,7 @@ export const addItem = async (req, res, next) => {
             duration,
             timer: duration,
             status: "Unlisted",
+            isVerified: false,
             image
         });
 
@@ -51,7 +60,16 @@ export const getItemsByUser = async (req, res, next) => {
 
 export const getVerifiedItems = async (req, res, next) => {
     try {
-        const items = await Item.find({ owner: req.params.id, isVerified: true });
+        const items = await Item.find({ isVerified: true, status: "Unlisted" });
+        res.status(200).json(items);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getPendingItems = async (req, res, next) => {
+    try {
+        const items = await Item.find({ isVerified: false });
         res.status(200).json(items);
     } catch (error) {
         next(error);
@@ -146,33 +164,55 @@ export const getItemById = async (req, res, next) => {
 }
 
 export const verifyItem = async (req, res, next) => {
-    const { id } = req.params;
+    console.log("req.params.id", req.params.id);
     try {
-        const item = await Item.findById(id);
+        const item = await Item.findByIdAndUpdate(
+            req.params.id,
+            { isVerified: true, status: "Unlisted" },
+            { new: true }
+        );
         if (!item) {
             return next(errorHandler(400, "Item not found"));
         }
-        item.isVerified = true;
-        await item.save();
-        
         res.status(200).json("Item verified successfully");
     } catch (error) {
         next(error);
     }
 }
 
-export const unverifyItem = async (req, res, next) => {
-    const { id } = req.params;
+export const declineItem = async (req, res, next) => {
+    const { id } = req.params.id;
     try {
-        const item = await Item.findById(id);
+        const item = await Item.findByIdAndUpdate(
+            id,
+            { isVerified: false , status: "Declined"},
+            { new: true }
+        );
+        
         if (!item) {
-            return next(errorHandler(400, "Item not found"));
+            return next(errorHandler(404, "Item not found"));
         }
-        item.isVerified = false;
-        await item.save();
 
         res.status(200).json("Item unverified successfully");
     } catch (error) {
+        next(error);
+    }
+}
+
+export const revertItem = async (req, res, next) => {
+    const { id } = req.params.id;
+    try {
+        const item = await Item.findByIdAndUpdate(
+            id,
+            { isVerified: false, status: "Unlisted" },
+            { new: true }
+        );
+        if (!item) {
+            return next(errorHandler(404, "Item not found"));
+        }
+        res.status(200).json("Item reverted successfully");
+    }
+    catch (error) {
         next(error);
     }
 }

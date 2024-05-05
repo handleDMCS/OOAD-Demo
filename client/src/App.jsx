@@ -13,6 +13,8 @@ import Profile from './pages/profile'
 import PublicRoute from './routes/PublicRoute'
 import NotFound from './pages/notfound'
 import My_items from './pages/my_items'
+import Admin from './pages/admin'
+import Activity_log from './pages/activity_log'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -23,6 +25,8 @@ function App() {
         <Route element={<PrivateRoute/>}>
           <Route path='/profile/:id' element={<Profile />}></Route>
           <Route path='/items/my' element={<My_items />}></Route>
+          <Route path='/admin' element={<Admin />}></Route>
+          <Route path='/log' element={<Activity_log />}></Route>
         </Route>
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<Login />} />

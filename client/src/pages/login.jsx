@@ -34,7 +34,10 @@ export default function Login () {
         dispatch(loginFailure(data.msg));
       } 
       dispatch(loginSuccess(data));
-      navigate('/');  
+      if (data.username === 'admin')
+        navigate('/admin');
+      else
+        navigate('/');  
     } catch (error) {
       dispatch(loginFailure(error));
     }

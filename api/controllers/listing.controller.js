@@ -4,25 +4,26 @@ import { errorHandler } from "../utils/error.js";
 
 import { io, listingIo } from "../socket.js";
 
-// @route POST /api/listing/start
-// @desc Start a listing
-export const startListing = async (req, res, next) => {
+export const listListings = async (req, res, next) => {
   try {
-    const items = await Item.find({ status: "Unlisted" });
-    if (!items) 
-      return null;
-    for (let item of items) {
-      if(item.startTime <= Date.now()) {
-        // start listing
-        await Item.findByIdAndUpdate(
-          item._id,
-          { status: "Listed" },
-        );
-        await item.save();
-        listingIo
-          .to(item._id.toString())
-          .emit("listing", { action: "started", item: item });
-      } else {
+    const items = await Item.find({ status: "Unlisted", isVerified: true});
+    if (items) 
+      for (let item of items) {
+        if(item.startTime <= Date.now()) {
+          await Item.findByIdAndUpdate(
+            item._id,
+            { status: "Listed" },
+          );
+          await item.save();
+          listingIo
+            .to(item._id.toString())
+            .emit("listing", { action: "started", item: item });
+        } 
+      }
+    const items2 = await Item.find({ status: "Listed" });
+    if (items2)
+      for (let item of items2)  
+      {
         // end listing
         const curTime = (Date.now() - item.startTime) / 1000;
         if (curTime >= item.duration) {
@@ -40,15 +41,39 @@ export const startListing = async (req, res, next) => {
             .emit("listing", { action: "ended", item: item });
         }
       }
-    }
+    res.status(200).json("Listings started successfully");
   } catch (error) {
     next(error);
   }
 };
 
-export const getListings = async (req, res, next) => {
+export const getActiveListings = async (req, res, next) => {
   try {
     let items = await Item.find({ status: "Listed" }).populate("owner", {
+      password: 0,
+    });
+    if (!items) return next(errorHandler(400, "No items found"));
+    res.status(200).json(items);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUpcomingListings = async (req, res, next) => {
+  try {
+    let items = await Item.find({ status: "Unlisted" }).populate("owner", {
+      password: 0,
+    });
+    if (!items) return next(errorHandler(400, "No items found"));
+    res.status(200).json(items);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPastListings = async (req, res, next) => {
+  try {
+    let items = await Item.find({ status: "Ended" }).populate("owner", {
       password: 0,
     });
     if (!items) return next(errorHandler(400, "No items found"));

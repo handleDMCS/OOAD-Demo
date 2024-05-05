@@ -147,7 +147,14 @@ function Add_Item_Info() {
   );
 }
 
-function Edit_Item_Info() {
+function Edit_Item_Info(
+  name,
+  initialPrice,
+  jump,
+  description,
+  duration,
+  image
+) {
   const currentItem = useSelector((state) => state.item.item);
   const [item, setItem] = useState({});
   const [error, setError] = useState(null);
@@ -353,9 +360,23 @@ function Add_item() {
 }
 
 export default function item_panel() {
-  const [listings, setListings] = useState([]);
+  const listings = useSelector(state => state.item.items);
+
+  const [modal_name, setName] = useState(0);
+  const [modal_info, setInfo] = useState(0);
+  const [modal_startingPrice, setStartingPrice] = useState(0);
+  const [modal_jump, setJump] = useState(0);
+  const [modal_duration, setDuration] = useState(0);
+  const [modal_image, setImage] = useState(0);
 
   const dispatch = useDispatch();
+
+  // paagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPage = useSelector(state => state.item.totalPage);
+  const handleSetPage = (page) => {
+    setCurrentPage(page);
+  }
 
   // fetch user listings
   useEffect(() => {
@@ -374,8 +395,8 @@ export default function item_panel() {
           return;
         }
         dispatch(fetchItemsSuccess(data));
-        setListings(data);
-        console.log(listings);
+        // setListings(data);
+        console.log("data", data, "listings", listings);
       } catch (error) {
         console.log(error);
       }
@@ -387,32 +408,54 @@ export default function item_panel() {
     <div className="flex flex-grow flex-col bg-base-200">
       <Add_Item_Info></Add_Item_Info>
       <Delete_item></Delete_item>
-      <Edit_Item_Info></Edit_Item_Info>
+      <Edit_Item_Info
+        name={modal_name}
+        info={modal_info}
+        startingPrice={modal_startingPrice}
+        jump={modal_jump} 
+        duration={modal_duration}
+        image={modal_image}
+      ></Edit_Item_Info>
       <Pagination_bar></Pagination_bar>
+
+      {/* <div className="flex flex-row justify-center gap-2 p-2 bg-neutral-300">
+        <select className="select select-bordered select-sm">
+          {Array.from({ length: totalPage }, (_, index) => (
+            <option
+              key={index}
+            >Page {currentPage}</option>
+          ))}
+        </select>
+        <button 
+          onClick={() => 
+            dispatch(pagination(Math.max(1, currentPage - 1)))
+          } 
+          className="btn btn-primary btn-sm"
+        >
+          Prev
+        </button>
+        <button onClick={() => dispatch(pagination(Math.min(totalPage, currentPage + 1)))} className="btn btn-primary btn-sm">
+          Next
+        </button>
+      </div> */}
+
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
-            {/* {[...Array(12)].map((_, index) => (
-              <Product_card handleClick={() => {document.getElementById('item-info').showModal();}} 
-              canDelete
-              handleDelete={(e) => {e.stopPropagation(); document.getElementById('delete-item').showModal();}}
-              />
-            ))} */}
-
             {listings &&
-              listings.map((listing) => (
+              listings.slice((currentPage - 1) * 5, currentPage * 5).map((listing) => (
                 <Product_card
                   key={listing._id}
                   handleClick={(e) => {
-                    e.stopPropagation();
-                    document.getElementById("item-info").showModal();
+                    // e.stopPropagation();
+                    setName(listing.productName);
+                    setInfo(listing.description);
+                    setStartingPrice(listing.initialPrice);
+                    setJump(listing.jump);
+                    setDuration(listing.duration);
+                    setImage(listing.image);
                     dispatch(updateItemStart(listing));
-                  }}
-                  canDelete
-                  handleDelete={(e) => {
-                    e.stopPropagation();
-                    document.getElementById("delete-item").showModal();
-                    dispatch(deleteItemStart(listing));
+                    document.getElementById("item-info").showModal();
                   }}
                   name={listing.productName}
                   owner={listing.owner.firstname + " " + listing.owner.lastname}
@@ -420,6 +463,13 @@ export default function item_panel() {
                   highestBid={listing.currentPrice}
                   duration={listing.timer}
                   image={listing.image}
+                  
+                  canDelete
+                  handleDelete={(e) => {
+                    // e.stopPropagation();
+                    dispatch(deleteItemStart(listing));
+                    document.getElementById("delete-item").showModal();
+                  }}
                 />
               ))}
 

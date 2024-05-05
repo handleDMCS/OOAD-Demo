@@ -14,7 +14,7 @@ function SubmitBid(
   { auctionID, currentBid }
 ) {
   const navigate = useNavigate();
-  const handleSubmit = async () => {
+  const handleSubmit = async () => {  
     try {
       const res = await fetch(`/api/listing/bid/${auctionID}`, {
         method: "PUT",
@@ -68,7 +68,7 @@ function CountDown({ remTime, setRemTime, duration }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setRemTime((prev) => {
-        return prev - 1;
+        return Math.max(prev - 1, 0);
       }); // Using a function to update remTime
     }, 1000);
 

@@ -46,6 +46,10 @@ const itemSchema = new mongoose.Schema({
         type: String,
         default: 'Unlisted'
     },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
     sold: {
         type: Boolean,
         default: false

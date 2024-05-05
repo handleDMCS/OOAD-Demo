@@ -1,8 +1,10 @@
 import express from 'express';
 
 import { 
-    startListing,
-    getListings,
+    listListings,
+    getActiveListings,
+    getUpcomingListings,
+    getPastListings,
     getListingByUser,
     getListingById,
     getListingBid,
@@ -12,8 +14,10 @@ import { verifyToken } from '../utils/auth.js';
 
 const router = express.Router();
 
-router.get('/list', startListing);
-router.get('/listings', verifyToken, getListings);
+router.get('/list', listListings);
+router.get('/active', verifyToken, getActiveListings);
+router.get('/upcoming', verifyToken, getUpcomingListings);
+router.get('/past', verifyToken, getPastListings)
 router.get('/listings/my', verifyToken, getListingByUser);
 router.get('/:id', verifyToken, getListingById);
 router.get('/bids/:id', verifyToken, getListingBid);
