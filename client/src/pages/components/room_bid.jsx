@@ -29,7 +29,7 @@ function SubmitBid(
       console.log(data);
 
       // change to use socket.io later
-      navigate(0);
+      // navigate(0);
     } catch (error) {
       console.log(error);
     }
@@ -307,7 +307,7 @@ function NewBid({
               min={startingPrice}
               step={priceStep}
               type="number"
-              value={currentBid}
+              value={currentBid ? currentBid : ""}
               className="grow"
               placeholder="Bid Amount"
               onChange={handleInputChange}
