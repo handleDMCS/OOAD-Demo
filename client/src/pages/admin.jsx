@@ -26,9 +26,7 @@ function Admin_modal({
   const navigate = useNavigate()
   const item = useSelector(state => state.item.item);
 
-  const handleVerify = async (e) => {
-    e.preventDefault();
-
+  const handleVerify = async () => {
     try {
       const res = await fetch(`/api/item/verify/${item._id}`, {
         method: "POST",
@@ -37,7 +35,7 @@ function Admin_modal({
         },
       });
       const data = await res.json();
-      if (!data.success) {
+      if (data.success == false) {
         dispatch(verifyItemFailure(data.error));
         return;
       }
@@ -48,7 +46,6 @@ function Admin_modal({
     }
   }
 
-
   const handleRevert = async () => {
     try {
       const res = await fetch(`/api/item/revert/${item._id}`, {
@@ -58,7 +55,7 @@ function Admin_modal({
         },
       });
       const data = await res.json();
-      if (!data.success) {
+      if (data.success == false) {
         dispatch(verifyItemFailure(data.error));
       }
       dispatch(verifyItemSuccess(data));
@@ -77,7 +74,7 @@ function Admin_modal({
         },
       });
       const data = await res.json();
-      if (!data.success) {
+      if (data.success == false) {
         dispatch(verifyItemFailure(data.error));
       }
       dispatch(verifyItemSuccess(date));
@@ -171,13 +168,17 @@ export default function admin() {
           },
         });
         const data = await res.json();
+        if(data.success == false) {
+          dispatch(fetchPendingFailure(data.error));
+          return;
+        }
         dispatch(fetchPendingSuccess(data));
-        // setPendingItems(data);
       } catch {
         dispatch(fetchPendingFailure());
       }
     }
     fetchPendingItems();
+    console.log(pendingItems);
   }, []);
 
   useEffect(() => {
@@ -191,17 +192,19 @@ export default function admin() {
           },
         });
         const data = await res.json();
+        if (data.success == false) {
+          dispatch(fetchVerifiedFailure(data.error));
+          return;
+        }
         dispatch(fetchVerifiedSuccess(data));
-        // setVerifiedItems(data);
       } catch {
         dispatch(fetchVerifiedFailure());
       }
     }
     fetchVerifiedItems();
+    console.log(verifiedItems);
   }, []);
 
-  console.log(pendingItems);
-  console.log(verifiedItems);
   
   return (
     <div className="flex flex-row w-screen h-screen">
@@ -215,7 +218,7 @@ export default function admin() {
         mode={modal_mode}
       ></Admin_modal>
 
-      <Admin_navbar></Admin_navbar>
+      <Admin_navbar currentPage="Admin"></Admin_navbar>
       
       <div className="flex flex-row gap-2 flex-grow pt-2 pb-2 pr-2">
         <div className="flex basis-1/2 bg-base-200 rounded-md flex-col overflow-hidden">
@@ -224,7 +227,7 @@ export default function admin() {
           </div>
           <Auction_panel
             item_per_row={2}
-            content={pendingItems.map(data => (
+            content={pendingItems ? pendingItems.map(data => (
               <Product_card
                 handleClick={() => {
                   setName(data.productName);
@@ -239,7 +242,11 @@ export default function admin() {
                   document.getElementById("admin-modal").showModal();
                 }}
               />
-            ))}
+            )) : 
+              <div className="flex mt-5 content-center justify-center text-lg text-black">
+                No pending items
+              </div>
+            }
           ></Auction_panel>
         </div>
         <div className="flex basis-1/2 bg-base-200 rounded-md flex-col overflow-hidden">
@@ -248,7 +255,7 @@ export default function admin() {
           </div>
           <Auction_panel
             item_per_row={2}
-            content={verifiedItems.length ? verifiedItems.map(data => (
+            content={verifiedItems ? verifiedItems.map(data => (
               <Product_card
                 name={data.productName}
                 owner={data.owner.firstname + " " + data.owner.lastname}

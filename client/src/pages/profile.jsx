@@ -22,7 +22,7 @@ export default function Profile() {
         </div>
         : 
         <div className="flex flex-grow pt-2 pr-2 pb-2">
-          <Admin_navbar currentPage="Admin"></Admin_navbar>
+          <Admin_navbar currentPage="Home"></Admin_navbar>
           <Profile_card 
             view="user" 
             admin 

@@ -443,7 +443,9 @@ export default function item_panel() {
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
             {listings &&
-              listings.slice((currentPage - 1) * 5, currentPage * 5).map((listing) => (
+              listings
+              // .slice((currentPage - 1) * 5, currentPage * 5)
+              .map((listing) => (
                 <Product_card
                   key={listing._id}
                   handleClick={(e) => {

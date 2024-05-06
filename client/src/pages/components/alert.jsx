@@ -5,7 +5,7 @@ function Begin({link=''}) {
     <dialog id="begin-alert" className="modal">
       <div className="modal-box w-1/2 max-w-5xl flex-col">
         <span className='flex'>
-          Attention: An auction room just went live. Click here to join 
+          An auction room just went live. Click here to join 
         </span>
         <a href={link} className='link link-primary'>{link}</a>
         <div className="modal-action">

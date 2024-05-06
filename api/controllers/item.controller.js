@@ -69,7 +69,7 @@ export const getVerifiedItems = async (req, res, next) => {
 
 export const getPendingItems = async (req, res, next) => {
     try {
-        const items = await Item.find({ isVerified: false });
+        const items = await Item.find({ isVerified: false, status: "Unlisted" });
         res.status(200).json(items);
     } catch (error) {
         next(error);
@@ -164,7 +164,6 @@ export const getItemById = async (req, res, next) => {
 }
 
 export const verifyItem = async (req, res, next) => {
-    console.log("req.params.id", req.params.id);
     try {
         const item = await Item.findByIdAndUpdate(
             req.params.id,
@@ -181,11 +180,10 @@ export const verifyItem = async (req, res, next) => {
 }
 
 export const declineItem = async (req, res, next) => {
-    const { id } = req.params.id;
     try {
         const item = await Item.findByIdAndUpdate(
-            id,
-            { isVerified: false , status: "Declined"},
+            req.params.id,
+            { isVerified: false , status: "Declined" },
             { new: true }
         );
         
@@ -200,10 +198,9 @@ export const declineItem = async (req, res, next) => {
 }
 
 export const revertItem = async (req, res, next) => {
-    const { id } = req.params.id;
     try {
         const item = await Item.findByIdAndUpdate(
-            id,
+            req.params.id,
             { isVerified: false, status: "Unlisted" },
             { new: true }
         );

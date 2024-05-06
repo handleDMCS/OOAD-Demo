@@ -73,7 +73,7 @@ function Auction_Panel() {
       <div className="flex flex-grow flex-col relative">
         <div className="h-full w-full overflow-auto absolute">
           <div className="grid grid-cols-4 gap-0">
-            { listings && listings.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage).map(listing => (
+            { listings && listings.map(listing => (
                 <Product_card 
                   key={listing._id}
                   handleClick={() => {

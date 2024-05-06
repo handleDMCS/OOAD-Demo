@@ -39,12 +39,10 @@ export default function nav_bar({showFilter=true, currentPage='Home'}) {
         
         <Link to='/items/my'>
           <li id='My-Items' ref={refMap['My-Items']}>
-          <h2 className='Menu-title mb-0.5'>My Items</h2>
+            <h2 className='Menu-title mb-0.5'>My Items</h2>
           </li>
         </Link>
-      </ul>      
-
-      {(showFilter == true) && <Filter></Filter>}
+      </ul> 
     </div>
   )
 }

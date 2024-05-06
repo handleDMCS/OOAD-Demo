@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { revertItem } from "../../../../api/controllers/item.controller";
 
 const initialState = {
     items: [],
@@ -105,6 +106,20 @@ export const itemSlice = createSlice({
             state.error = action.payload;
             state.loading = false;
             state.item = null;
+        },
+        revertItemStart: (state, action) => {
+            state.loading = true;
+            state.item = action.payload;
+        },
+        revertItemSuccess: (state, action) => {
+            state.error = null;
+            state.loading = false;
+            state.item = null;
+        },
+        revertItemFailure: (state, action) => {
+            state.error = action.payload;
+            state.loading = false;
+            state.item = null;
         }
     },
 });
@@ -117,6 +132,7 @@ export const {
     fetchPendingStart, fetchPendingSuccess, fetchPendingFailure,
     fetchVerifiedStart, fetchVerifiedSuccess, fetchVerifiedFailure,
     verifyItemStart, verifyItemSuccess, verifyItemFailure,
+    revertItemStart, revertItemSuccess, revertItemFailure
 } = itemSlice.actions;
 
 export default itemSlice.reducer;

@@ -6,20 +6,30 @@ import { io, listingIo } from "../socket.js";
 
 export const listListings = async (req, res, next) => {
   try {
-    const items = await Item.find({ status: "Unlisted", isVerified: true});
+    const items = await Item.find({ status: "Unlisted"});
     if (items) 
       for (let item of items) {
         if(item.startTime <= Date.now()) {
-          await Item.findByIdAndUpdate(
-            item._id,
-            { status: "Listed" },
-          );
-          await item.save();
-          listingIo
-            .to(item._id.toString())
-            .emit("listing", { action: "started", item: item });
-        } 
+          if(item.isVerified === false) {
+            // declined
+            await Item.findByIdAndUpdate(
+              item._id,
+              { status: "Declined" },
+            );
+          } 
+          else {
+            await Item.findByIdAndUpdate(
+              item._id,
+              { status: "Listed" },
+            );
+            await item.save();
+            listingIo
+              .to(item._id.toString())
+              .emit("listing", { action: "started", item: item });
+          }
+        }
       }
+
     const items2 = await Item.find({ status: "Listed" });
     if (items2)
       for (let item of items2)  
@@ -154,8 +164,7 @@ export const userBid = async (req, res, next) => {
       amount: bid 
     });
     await item.save();
-    io.getListingIO()
-      .to(item._id.toString())
+    io.to(item._id.toString())
       .emit("listing", { 
         action: "bid", 
         item: item,

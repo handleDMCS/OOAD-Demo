@@ -22,18 +22,21 @@ export const deleteAccount = async (req, res, next) => {
 }
 
 export const updateAccount = async (req, res, next) => {
-    if (req.params.id !== req.user._id) {
-        return next(errorHandler(403, "Unauthorized"));
-    }
-    const { password } = req.body;
+    const { firstname, lastname, email, description } = req.body;
+    console.log("firstname", firstname);
+    console.log("lastname", lastname);
+    console.log("email", email);
+    console.log("description", description);
+
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { firstname, lastname, email, description },
+            { new: true }
+        );
         if (!user) {
             return next(errorHandler(400, "User not found"));
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
-        await user.save();
 
         res.status(200).json("User updated successfully");
     }

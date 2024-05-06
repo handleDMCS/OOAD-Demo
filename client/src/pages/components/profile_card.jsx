@@ -33,20 +33,68 @@ function Contact_card({ icon, label, value, link = false }) {
   );
 }
 
+function Change_Password() {
+  return (
+    <dialog id="change-password" className="modal">
+      <div className="modal-box w-1/2 max-w-5xl">
+        <form className="flex flex-col gap-2">
+          <label className="form-input">
+            Current Password
+            <input
+              type="password"
+              className="input-lg"
+							defaultValue={""}
+							onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label className="form-input">
+            New Password
+            <input
+              type="password"
+              className="input-lg"
+							defaultValue={""}
+							onChange={handleChange}
+              required
+            />
+          </label>
+
+          <label className="form-input">
+            Confirm Password
+            <input
+              type="password"
+              className="input-lg"
+							defaultValue={""}
+							onChange={handleChange}
+              required
+            />
+          </label>
+        </form>
+      </div>
+    </dialog>
+  );
+}
+
 function Edit({ userID }) {
 	const user = useSelector((state) => state.user.user);
 	const [formUser, setFormUser] = useState({});
 
 	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormUser({ ...formUser, [name]: value });
+		setFormUser({ 
+      ...formUser, 
+      [e.target.id]: e.target.value 
+    });
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		try {
-			const res = await fetch(`/api/user/update/${userID}`, {
-				method: 'PUT',
+		
+    console.log(formUser);
+
+    try {
+			const res = await fetch(`/api/user/update/${user._id}`, {
+				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
@@ -71,6 +119,7 @@ function Edit({ userID }) {
           <label className="form-input">
             First Name
             <input
+              id="firstname" 
               type="text"
               className="input-lg"
               placeholder="Your Public Name"
@@ -83,6 +132,7 @@ function Edit({ userID }) {
 					<label className="form-input">
             Last Name
             <input
+              id="lastname"
               type="text"
               className="input-lg"
               placeholder="Your Public Name"
@@ -95,6 +145,7 @@ function Edit({ userID }) {
           <label className="form-input">
             Gmail
             <input
+              id="email"
               type="text"
               className="input-lg"
               placeholder="Your Gmail"
@@ -105,11 +156,12 @@ function Edit({ userID }) {
           </label>
 
           <textarea
+            id="description"
             className="textarea textarea-bordered min-h-48 input-lg"
             placeholder="Description"
           ></textarea>
 
-          <button onSubmit={handleSubmit} type="submit" className="btn btn-primary w-full">
+          <button onClick={handleSubmit} type="submit" className="btn btn-primary w-full">
             Save
           </button>
         </form>
@@ -131,8 +183,6 @@ export default function profile_card({
 }) {
 	const [user, setUser] = useState({});
 	const params = useParams();
-
-  console.log(params.id);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -233,7 +283,7 @@ export default function profile_card({
                   View upcoming auctions
                 </button>
               )}
-              {admin == true && view == "user" && (
+              {user.username == 'admin' && view == "user" && (
                 <button className="btn btn-error text-lg">
                   <UserPlus></UserPlus>
                   Admin
@@ -256,53 +306,13 @@ export default function profile_card({
       <div className="flex basis-4/6 p-4 shadow-2xl bg-base-300 relative">
         <span className="absolute top-1 left-10 font-bold">Description</span>
         <div className="flex flex-grow bg-base-200 rounded-box shadow-lg pt-3 pl-3">
-          <div className="flex flex-grow overflow-scroll">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime
-            mollitia, molestiae quas vel sint commodi repudiandae consequuntur
-            voluptatum laborum numquam blanditiis harum quisquam eius sed odit
-            fugiat iusto fuga praesentium optio, eaque rerum! Provident
-            similique accusantium nemo autem. Veritatis obcaecati tenetur iure
-            eius earum ut molestias architecto voluptate aliquam nihil, eveniet
-            aliquid culpa officia aut! Impedit sit sunt quaerat, odit, tenetur
-            error, harum nesciunt ipsum debitis quas aliquid. Reprehenderit,
-            quia. Quo neque error repudiandae fuga? Ipsa laudantium molestias
-            eos sapiente officiis modi at sunt excepturi expedita sint? Sed
-            quibusdam recusandae alias error harum maxime adipisci amet laborum.
-            Perspiciatis minima nesciunt dolorem! Officiis iure rerum voluptates
-            a cumque velit quibusdam sed amet tempora. Sit laborum ab, eius
-            fugit doloribus tenetur fugiat, temporibus enim commodi iusto libero
-            magni deleniti quod quam consequuntur! Commodi minima excepturi
-            repudiandae velit hic maxime doloremque. Quaerat provident commodi
-            consectetur veniam similique ad earum omnis ipsum saepe, voluptas,
-            hic voluptates pariatur est explicabo fugiat, dolorum eligendi quam
-            cupiditate excepturi mollitia maiores labore suscipit quas? Nulla,
-            placeat. Voluptatem quaerat non architecto ab laudantium modi minima
-            sunt esse temporibus sint culpa, recusandae aliquam numquam totam
-            ratione voluptas quod exercitationem fuga. Possimus quis earum
-            veniam quasi aliquam eligendi, placeat qui corporis! Lorem ipsum
-            dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-            molestiae quas vel sint commodi repudiandae consequuntur voluptatum
-            laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto
-            fuga praesentium optio, eaque rerum! Provident similique accusantium
-            nemo autem. Veritatis obcaecati tenetur iure eius earum ut molestias
-            architecto voluptate aliquam nihil, eveniet aliquid culpa officia
-            aut! Impedit sit sunt quaerat, odit, tenetur error, harum nesciunt
-            ipsum debitis quas aliquid. Reprehenderit, quia. Quo neque error
-            repudiandae fuga? Ipsa laudantium molestias eos sapiente officiis
-            modi at sunt excepturi expedita sint? Sed quibusdam recusandae alias
-            error harum maxime adipisci amet laborum. Perspiciatis minima
-            nesciunt dolorem! Officiis iure rerum voluptates a cumque velit
-            quibusdam sed amet tempora. Sit laborum ab, eius fugit doloribus
-            tenetur fugiat, temporibus enim commodi iusto libero magni deleniti
-            quod quam consequuntur! Commodi minima excepturi repudiandae velit
-            hic maxime doloremque. Quaerat provident commodi consectetur veniam
-            similique ad earum omnis ipsum saepe, voluptas, hic voluptates
-            pariatur est explicabo fugiat, dolorum eligendi quam cupiditate
-            excepturi mollitia maiores labore suscipit quas? Nulla, placeat.
-            Voluptatem quaerat non architecto ab laudantium modi minima sunt
-            esse temporibus sint culpa, recusandae aliquam numquam totam ratione
-            voluptas quod exercitationem fuga. Possimus quis earum veniam quasi
-            aliquam eligendi, placeat qui corporis!
+          <div className="flex flex-grow overflow-hidden">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas
+              voluptates, quod, fugit, quos voluptatum doloribus aspernatur
+              doloremque quidem quae voluptate quibusdam. Quibusdam, quod
+              voluptates
+            </p>
           </div>
         </div>
       </div>
